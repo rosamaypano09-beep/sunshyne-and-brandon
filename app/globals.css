@@ -1186,3 +1186,59 @@ img[src*="%2Flovestorydeco%2F"] {
   letter-spacing: 0;
   margin: 0 0.04em;
 }
+
+/* Tinted decoration image (components/tinted-deco.tsx) — color: --deco-filter */
+.tinted-deco {
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.tinted-deco__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: var(--deco-filter);
+}
+
+/* Small hearts rising behind a section (components/rising-hearts.tsx → RisingHearts) */
+.story-rise {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Stacked bands in tall sections (RisingHearts fill): hearts float up past
+   their band; the outer .story-rise clips them */
+.story-rise--band {
+  overflow: visible;
+}
+
+.story-rise__heart {
+  position: absolute;
+  bottom: -16px;
+  opacity: 0;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--color-motif-blush) 70%, transparent));
+  animation: story-rise-up linear infinite;
+  will-change: transform, opacity;
+}
+
+/* Each heart fades to its own --peak opacity and sways gently by --tilt */
+@keyframes story-rise-up {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+  15% { opacity: var(--peak, 0.6); }
+  50% { transform: translate3d(calc(var(--drift, 0px) * -0.5), -55vh, 0) rotate(var(--tilt, 8deg)); }
+  80% { opacity: calc(var(--peak, 0.6) * 0.75); }
+  100% { opacity: 0; transform: translate3d(var(--drift, 0px), -110vh, 0) rotate(calc(var(--tilt, 8deg) * -1)); }
+}
+
+/* Butter-yellow tone (RisingHearts tone="butter") — warm glow instead of blush */
+.story-rise--butter .story-rise__heart {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-motif-yellow) 80%, transparent));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-rise { display: none; }
+}
