@@ -252,7 +252,7 @@ const ATTIRE = {
 
 // ── Website address (used for QR codes, link previews, table finder) ────────
 // NEXT_PUBLIC_SITE_URL (env) overrides this when set.
-const SITE_URL = "https://sunshyne-and-brandon.vercel.app/" // ⚠ check — replace if the couple gets a custom domain
+const SITE_URL = "https://sunshyne-and-brandon.weddinginvitationrsvp.com/" // ⚠ check — replace if the couple gets a custom domain
 // Image shown when the link is shared (Facebook, Messenger, Viber, X, …).
 // Messenger is strict: use a JPG exactly 1200×630, under ~300 KB. When you replace it,
 // change the file name (or bump ?v=) so Facebook fetches the new one instead of its cache.

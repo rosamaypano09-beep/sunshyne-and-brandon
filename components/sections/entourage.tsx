@@ -2,6 +2,7 @@
 
 import React from "react"
 import { useState, useEffect, useMemo, useRef } from "react"
+import { MotionConfig, motion } from "motion/react"
 import localFont from "next/font/local"
 import { Section } from "@/components/section"
 import { sectionType } from "@/lib/section-typography"
@@ -13,6 +14,7 @@ import { PlainBubbles } from "@/components/loader/PlainBubbles"
 import { RisingMotes } from "@/components/rising-motes"
 import { GhostMarquee } from "@/components/loader/GhostMarquee"
 import { ghostTextFor } from "@/lib/ghost-text"
+import { toDisplayName, toDisplayRole } from "@/lib/entourage-names"
 import "@/components/loader/loading-screen.css"
 import "@/components/sections/love-story-red.css"
 
@@ -82,42 +84,23 @@ function OutsideDivider() {
   )
 }
 
-const SECTION_TITLE_CLASS = `${theSeasons.className} text-[0.65rem] sm:text-[0.78rem] md:text-[0.9rem] tracking-[0.08em] sm:tracking-[0.12em] md:tracking-[0.14em] uppercase leading-tight`
+const SECTION_TITLE_CLASS = `${theSeasons.className} text-[0.72rem] sm:text-[0.8rem] md:text-[0.92rem] tracking-[0.08em] sm:tracking-[0.12em] md:tracking-[0.14em] uppercase leading-tight`
 
 const nameStyle: React.CSSProperties = {
-  fontSize: "clamp(0.62rem, min(2vw, 4.8cqi), 0.98rem)",
-  lineHeight: 1.2,
+  fontSize: "clamp(0.76rem, min(2.3vw, 4.8cqi), 1.02rem)",
+  lineHeight: 1.25,
   letterSpacing: "0.02em",
 }
 
 const roleTitleStyle: React.CSSProperties = {
-  fontSize: "clamp(0.5rem, min(1.55vw, 3.5cqi), 0.68rem)",
-  lineHeight: 1.1,
+  fontSize: "clamp(0.62rem, min(1.7vw, 3.4cqi), 0.74rem)",
+  lineHeight: 1.15,
 }
 
-const ROMAN_NUMERAL = /^(I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV)$/i
 const SPECIAL_GLYPH = /^(?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|&|\+|[.’'`´-]|—|–)$/i
 const SPECIAL_SPLIT = /(\b(?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV)\b|&|\+|[.’'`´-]|—|–)/g
 const DASH_GLYPH = /^[-—–]$/
 const PLUS_GLYPH = /^\+$/
-
-function toDisplayName(value: string) {
-  return value
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((word) =>
-      word
-        .split("-")
-        .map((part) => {
-          if (!part) return part
-          if (ROMAN_NUMERAL.test(part)) return part.toUpperCase()
-          return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-        })
-        .join("-"),
-    )
-    .join(" ")
-}
 
 function MixedFontText({
   text,
@@ -342,9 +325,9 @@ const SINGLE_COLUMN_SECTIONS = new Set([
 const ROLE_CATEGORY_DISPLAY_TITLES: Record<string, string> = {
   "Candle Sponsors": "To light our path",
   "Candle Sponsor": "To light our path",
-  "Veil Sponsors": "To Cloth us as one",
-  "Veil Sponsor": "To Cloth us as one",
-  Veil: "To Cloth us as one",
+  "Veil Sponsors": "To clothe us as one",
+  "Veil Sponsor": "To clothe us as one",
+  Veil: "To clothe us as one",
   "Cord Sponsors": "To bind us together",
   "Cord Sponsor": "To bind us together",
   "Chord Sponsors": "To bind us together",
@@ -396,6 +379,33 @@ function isCoupleMember(member: EntourageMember): boolean {
   return normalizeRoleCategory(member.roleCategory) === "The Couple"
 }
 
+// "Flower Girl" under a "Flower Girls" heading says nothing new. Poetic headings
+// ("To light our path") keep the role, since it explains what the person does.
+function roleRepeatsHeading(member: EntourageMember): boolean {
+  const singular = (text: string) => text.trim().toLowerCase().replace(/men$/, "man").replace(/s$/, "")
+  const category = normalizeRoleCategory(member.roleCategory)
+  return displayRoleCategory(category) === category && singular(member.roleTitle) === singular(member.roleCategory)
+}
+
+// Removes people already listed, then puts couples first and solo sponsors after them
+function tidySponsors(sponsors: PrincipalSponsor[]): PrincipalSponsor[] {
+  const seen = new Set<string>()
+  const firstMention = (name: string) => {
+    const key = toDisplayName(name).toLowerCase()
+    if (!key || seen.has(key)) return ""
+    seen.add(key)
+    return name
+  }
+  const rows = sponsors
+    .map((sponsor) => ({
+      malePrincipalSponsor: firstMention(sponsor.malePrincipalSponsor),
+      femalePrincipalSponsor: firstMention(sponsor.femalePrincipalSponsor),
+    }))
+    .filter((sponsor) => sponsor.malePrincipalSponsor || sponsor.femalePrincipalSponsor)
+  const isCouple = (sponsor: PrincipalSponsor) => sponsor.malePrincipalSponsor && sponsor.femalePrincipalSponsor
+  return [...rows.filter(isCouple), ...rows.filter((sponsor) => !isCouple(sponsor))]
+}
+
 function sortGroomParents(members: EntourageMember[]): EntourageMember[] {
   return [...members].sort((a, b) => {
     const aIsFather = a.roleTitle?.toLowerCase().includes("father") ?? false
@@ -419,7 +429,7 @@ function sortBrideParents(members: EntourageMember[]): EntourageMember[] {
 function toEntourageMembers(data: Record<string, unknown>[]): EntourageMember[] {
   return data
     .map((row) => entourageMemberFromApi(row))
-    .filter((member) => member.name.trim())
+    .filter((member) => toDisplayName(member.name))
     .filter((member) => !isCoupleMember(member))
 }
 
@@ -459,6 +469,238 @@ function readCachedParty(sponsorsPath: string) {
     members: members ? toEntourageMembers(members) : [],
     sponsors: sponsors ? toPrincipalSponsors(sponsors) : [],
   }
+}
+
+// Scroll reveal: each piece plays once as it comes up past the bottom ~8% of the screen.
+// Only opacity + transform animate (see components/scroll-reveal.tsx).
+const REVEAL_EASE = [0.22, 1, 0.36, 1] as const
+const REVEAL_VIEWPORT = { once: true, amount: 0.3, margin: "0px 0px -8% 0px" } as const
+// Names slide in toward the card's center line
+const NAME_ENTRY_X = { right: -22, left: 22, center: 0 } as const
+
+// Gold rule between groups; draws outward from the center
+function RevealLine() {
+  return (
+    <motion.div
+      className="h-px w-full max-w-md"
+      style={dividerLineStyle}
+      initial={{ opacity: 0, scaleX: 0 }}
+      whileInView={{ opacity: 1, scaleX: 1 }}
+      viewport={REVEAL_VIEWPORT}
+      transition={{ duration: 1, ease: REVEAL_EASE }}
+    />
+  )
+}
+
+// Helper component for elegant section titles (category labels)
+const SectionTitle = ({
+  children,
+  align = "center",
+  className = "",
+}: {
+  children: React.ReactNode
+  align?: "left" | "center" | "right"
+  className?: string
+}) => {
+  const content = useSiteConfig().entourage
+  const textAlign =
+    align === "right" ? "text-right" : align === "left" ? "text-left" : "text-center"
+  return (
+    <motion.h3
+      className={`relative ${SECTION_TITLE_CLASS} mb-1.5 sm:mb-2 md:mb-2.5 ${textAlign} ${className}`}
+      style={{ color: NAVY }}
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={REVEAL_VIEWPORT}
+      transition={{ duration: 0.7, ease: REVEAL_EASE }}
+    >
+      {typeof children === "string" ? (
+        <MixedFontText
+          text={content.headingLabels[children] ?? children}
+          specialClassName="font-goudy-italic normal-case tracking-normal"
+        />
+      ) : (
+        children
+      )}
+    </motion.h3>
+  )
+}
+
+const NameItem = ({
+  member,
+  align = "center",
+  showRole = true,
+  featured = false,
+}: {
+  member: EntourageMember
+  align?: "left" | "center" | "right"
+  showRole?: boolean
+  featured?: boolean
+}) => {
+  const containerAlign =
+    align === "right" ? "items-end" : align === "left" ? "items-start" : "items-center"
+  const textAlign =
+    align === "right" ? "text-right" : align === "left" ? "text-left" : "text-center"
+  const displayName = toDisplayName(member.name)
+  const displayRole = member.roleTitle ? toDisplayRole(member.roleTitle) : ""
+  return (
+    <motion.div
+      className={`relative flex flex-col ${containerAlign} justify-center py-1 sm:py-1.5 min-w-0 w-full max-w-full group/item`}
+      initial={{ opacity: 0, x: NAME_ENTRY_X[align], y: align === "center" ? 14 : 0 }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={REVEAL_VIEWPORT}
+      transition={{ duration: 0.8, ease: REVEAL_EASE }}
+    >
+      <div
+        className="absolute inset-0 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 rounded-md"
+        style={{ background: "linear-gradient(to right, transparent, color-mix(in srgb, var(--color-motif-blush) 45%, transparent), transparent)" }}
+      />
+      <p
+        className={`${theSeasons.className} relative ${textAlign} transition-all duration-300 max-w-full break-words`}
+        style={{
+          ...nameStyle,
+          ...(featured
+            ? {
+                fontSize: "clamp(0.86rem, min(2.6vw, 5.2cqi), 1.18rem)",
+              }
+            : {}),
+          color: NAVY,
+        }}
+        title={displayName.replace(/\+/g, "†")}
+      >
+        {displayName ? (
+          <MixedFontText
+            text={displayName}
+            specialClassName="font-goudy-italic tracking-normal"
+          />
+        ) : null}
+      </p>
+      {showRole && displayRole && !roleRepeatsHeading(member) && (
+        <p
+          className={`${theSeasons.className} relative mt-0.5 ${textAlign} max-w-full break-words`}
+          style={{ ...roleTitleStyle, color: SCRIPT }}
+          title={displayRole}
+        >
+          <MixedFontText
+            text={displayRole}
+            specialClassName="font-goudy-italic tracking-normal"
+          />
+        </p>
+      )}
+    </motion.div>
+  )
+}
+
+// Rows of left | right names (right-aligned left column, left-aligned right column)
+const renderPairRows = (keyPrefix: string, left: EntourageMember[], right: EntourageMember[]) => {
+  const maxLen = Math.max(left.length, right.length)
+  const rows = []
+  for (let i = 0; i < maxLen; i++) {
+    const l = left[i]
+    const r = right[i]
+    rows.push(
+      <React.Fragment key={`${keyPrefix}-row-${i}`}>
+        <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
+          {l ? <NameItem member={l} align="right" /> : <div className="py-0.5" />}
+        </div>
+        <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
+          {r ? <NameItem member={r} align="left" /> : <div className="py-0.5" />}
+        </div>
+      </React.Fragment>
+    )
+  }
+  return rows
+}
+
+const TwoColumnLayout = ({
+  children,
+  leftTitle,
+  rightTitle,
+  singleTitle,
+  centerContent = false,
+}: {
+  children: React.ReactNode
+  leftTitle?: string
+  rightTitle?: string
+  singleTitle?: string
+  centerContent?: boolean
+}) => {
+  if (singleTitle) {
+    return (
+      <div className="mb-2 sm:mb-2.5 md:mb-3">
+        <SectionTitle>{singleTitle}</SectionTitle>
+        <div
+          className={`grid grid-cols-2 gap-x-1.5 sm:gap-x-3 md:gap-x-5 gap-y-1 sm:gap-y-1.5 ${centerContent ? "max-w-3xl mx-auto" : ""}`}
+        >
+          {children}
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mb-2 sm:mb-2.5 md:mb-3">
+      <div className="grid grid-cols-2 gap-x-1.5 sm:gap-x-3 md:gap-x-5 mb-2 sm:mb-2.5 md:mb-3">
+        {leftTitle && (
+          <SectionTitle align="right" className="pr-0.5 sm:pr-1">
+            {leftTitle}
+          </SectionTitle>
+        )}
+        {rightTitle && (
+          <SectionTitle align="left" className="pl-0.5 sm:pl-1">
+            {rightTitle}
+          </SectionTitle>
+        )}
+      </div>
+      <div
+        className={`grid grid-cols-2 gap-x-1.5 sm:gap-x-3 md:gap-x-5 gap-y-1 sm:gap-y-1.5 ${centerContent ? "max-w-3xl mx-auto" : ""}`}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
+// Names split evenly into left | right; an odd last name sits centered below
+const renderNameBlock = (key: string, title: string, members: EntourageMember[]) => {
+  const half = Math.floor(members.length / 2)
+  const lastName = members.length % 2 === 1 ? members[members.length - 1] : null
+  return (
+    <TwoColumnLayout singleTitle={title} centerContent={true}>
+      {renderPairRows(key, members.slice(0, half), members.slice(half, half * 2))}
+      {lastName && (
+        <div className="col-span-2 min-w-0 overflow-hidden px-0.5 sm:px-1">
+          <NameItem member={lastName} align="center" />
+        </div>
+      )}
+    </TwoColumnLayout>
+  )
+}
+
+// Two groups side by side under their own titles. A group on its own, or two very
+// uneven groups, get centered blocks so no column is left half empty.
+const renderPairBlock = (
+  key: string,
+  leftTitle: string,
+  left: EntourageMember[],
+  rightTitle: string,
+  right: EntourageMember[],
+) => {
+  const shorter = Math.min(left.length, right.length)
+  const longer = Math.max(left.length, right.length)
+  if (shorter > 0 && longer <= shorter * 2) {
+    return (
+      <TwoColumnLayout leftTitle={leftTitle} rightTitle={rightTitle}>
+        {renderPairRows(key, left, right)}
+      </TwoColumnLayout>
+    )
+  }
+  return (
+    <>
+      {left.length > 0 && renderNameBlock(`${key}-left`, leftTitle, left)}
+      {right.length > 0 && renderNameBlock(`${key}-right`, rightTitle, right)}
+    </>
+  )
 }
 
 export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}) {
@@ -581,170 +823,13 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
     return grouped
   }, [entourage])
 
+  const sponsorRows = useMemo(() => tidySponsors(sponsors), [sponsors])
+
   const hasParents =
     (grouped["Parents of the Groom"]?.length ?? 0) > 0 || (grouped["Parents of the Bride"]?.length ?? 0) > 0
 
-  // Helper component for elegant section titles (category labels)
-  const SectionTitle = ({
-    children,
-    align = "center",
-    className = "",
-  }: {
-    children: React.ReactNode
-    align?: "left" | "center" | "right"
-    className?: string
-  }) => {
-    const textAlign =
-      align === "right" ? "text-right" : align === "left" ? "text-left" : "text-center"
-    return (
-      <h3
-        className={`relative ${SECTION_TITLE_CLASS} mb-1.5 sm:mb-2 md:mb-2.5 ${textAlign} ${className} transition-all duration-300`}
-        style={{ color: NAVY }}
-      >
-        {typeof children === "string" ? (
-          <MixedFontText
-            text={content.headingLabels[children] ?? children}
-            specialClassName="font-goudy-italic normal-case tracking-normal"
-          />
-        ) : (
-          children
-        )}
-      </h3>
-    )
-  }
-
-  const NameItem = ({
-    member,
-    align = "center",
-    showRole = true,
-    featured = false,
-  }: {
-    member: EntourageMember
-    align?: "left" | "center" | "right"
-    showRole?: boolean
-    featured?: boolean
-  }) => {
-    const containerAlign =
-      align === "right" ? "items-end" : align === "left" ? "items-start" : "items-center"
-    const textAlign =
-      align === "right" ? "text-right" : align === "left" ? "text-left" : "text-center"
-    const displayName = toDisplayName(member.name)
-    const displayRole = member.roleTitle ? toDisplayName(member.roleTitle) : ""
-    return (
-      <div
-        className={`relative flex flex-col ${containerAlign} justify-center py-1 sm:py-1.5 min-w-0 w-full max-w-full group/item transition-all duration-300`}
-      >
-        <div
-          className="absolute inset-0 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 rounded-md"
-          style={{ background: "linear-gradient(to right, transparent, color-mix(in srgb, var(--color-motif-blush) 45%, transparent), transparent)" }}
-        />
-        <p
-          className={`${theSeasons.className} relative ${textAlign} transition-all duration-300 max-w-full break-words`}
-          style={{
-            ...nameStyle,
-            ...(featured
-              ? {
-                  fontSize: "clamp(0.68rem, min(2.1vw, 5.2cqi), 1.05rem)",
-                }
-              : {}),
-            color: NAVY,
-          }}
-          title={displayName.replace(/\+/g, "†")}
-        >
-          {displayName ? (
-            <MixedFontText
-              text={displayName}
-              specialClassName="font-goudy-italic tracking-normal"
-            />
-          ) : null}
-        </p>
-        {showRole && displayRole && (
-          <p
-            className={`${theSeasons.className} relative mt-0.5 ${textAlign} max-w-full break-words`}
-            style={{ ...roleTitleStyle, color: SCRIPT }}
-            title={displayRole}
-          >
-            <MixedFontText
-              text={displayRole}
-              specialClassName="font-goudy-italic tracking-normal"
-            />
-          </p>
-        )}
-      </div>
-    )
-  }
-
-  // Rows of left | right names (right-aligned left column, left-aligned right column)
-  const renderPairRows = (keyPrefix: string, left: EntourageMember[], right: EntourageMember[]) => {
-    const maxLen = Math.max(left.length, right.length)
-    const rows = []
-    for (let i = 0; i < maxLen; i++) {
-      const l = left[i]
-      const r = right[i]
-      rows.push(
-        <React.Fragment key={`${keyPrefix}-row-${i}`}>
-          <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-            {l ? <NameItem member={l} align="right" /> : <div className="py-0.5" />}
-          </div>
-          <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-            {r ? <NameItem member={r} align="left" /> : <div className="py-0.5" />}
-          </div>
-        </React.Fragment>
-      )
-    }
-    return rows
-  }
-
-  const TwoColumnLayout = ({
-    children,
-    leftTitle,
-    rightTitle,
-    singleTitle,
-    centerContent = false,
-  }: {
-    children: React.ReactNode
-    leftTitle?: string
-    rightTitle?: string
-    singleTitle?: string
-    centerContent?: boolean
-  }) => {
-    if (singleTitle) {
-      return (
-        <div className="mb-2 sm:mb-2.5 md:mb-3">
-          <SectionTitle>{singleTitle}</SectionTitle>
-          <div
-            className={`grid grid-cols-2 gap-x-1.5 sm:gap-x-3 md:gap-x-5 gap-y-1 sm:gap-y-1.5 ${centerContent ? "max-w-3xl mx-auto" : ""}`}
-          >
-            {children}
-          </div>
-        </div>
-      )
-    }
-
-    return (
-      <div className="mb-2 sm:mb-2.5 md:mb-3">
-        <div className="grid grid-cols-2 gap-x-1.5 sm:gap-x-3 md:gap-x-5 mb-2 sm:mb-2.5 md:mb-3">
-          {leftTitle && (
-            <SectionTitle align="right" className="pr-0.5 sm:pr-1">
-              {leftTitle}
-            </SectionTitle>
-          )}
-          {rightTitle && (
-            <SectionTitle align="left" className="pl-0.5 sm:pl-1">
-              {rightTitle}
-            </SectionTitle>
-          )}
-        </div>
-        <div
-          className={`grid grid-cols-2 gap-x-1.5 sm:gap-x-3 md:gap-x-5 gap-y-1 sm:gap-y-1.5 ${centerContent ? "max-w-3xl mx-auto" : ""}`}
-        >
-          {children}
-        </div>
-      </div>
-    )
-  }
-
   return (
+    <MotionConfig reducedMotion="user">
     <div
       ref={sectionRef}
       className={`red-velvet-root ${theSeasons.variable} ${aboveTheBeyond.variable} relative w-full overflow-hidden`}
@@ -840,17 +925,18 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
               <CouplePromiseMark kicker={content.coupleKicker} line={content.coupleLine} />
               <div className="mb-2 sm:mb-2.5 md:mb-3">
                 <SectionTitle>{content.coupleHeading}</SectionTitle>
-                <div className="flex flex-wrap justify-center gap-x-10 gap-y-2 sm:gap-x-16">
+                <div className="grid grid-cols-2 gap-x-1.5 sm:gap-x-3 md:gap-x-5">
                   {[
-                    { name: siteConfig.couple.bride, roleTitle: content.brideRole },
-                    { name: siteConfig.couple.groom, roleTitle: content.groomRole },
-                  ].map((person) => (
-                    <NameItem
-                      key={person.roleTitle}
-                      member={{ ...person, roleCategory: "The Couple", email: "" }}
-                      align="center"
-                      featured
-                    />
+                    { name: siteConfig.couple.bride, roleTitle: content.brideRole, align: "right" as const },
+                    { name: siteConfig.couple.groom, roleTitle: content.groomRole, align: "left" as const },
+                  ].map(({ align, ...person }) => (
+                    <div key={person.roleTitle} className="min-w-0 overflow-hidden px-0.5 sm:px-1 md:px-1.5">
+                      <NameItem
+                        member={{ ...person, roleCategory: "The Couple", email: "" }}
+                        align={align}
+                        featured
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
@@ -901,7 +987,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                       <div key="Parents">
                         {categoryIndex > 0 && (
                           <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                            <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                            <RevealLine />
                           </div>
                         )}
                         {hasGroomParents && hasBrideParents && (
@@ -986,42 +1072,34 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                           <div key="SponsorsAfterParents">
                             <div className="flex justify-center py-1.5 sm:py-2 md:py-2.5 mb-2 sm:mb-2.5 md:mb-3" />
                             <TwoColumnLayout singleTitle="Principal Sponsors" centerContent={true}>
-                              {sponsors.map((sponsor, idx) => (
-                                <React.Fragment key={`sponsor-row-${idx}`}>
-                                  <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-                                    {sponsor.malePrincipalSponsor ? (
-                                      <NameItem
-                                        member={{
-                                          name: sponsor.malePrincipalSponsor,
-                                          roleCategory: "",
-                                          roleTitle: "",
-                                          email: "",
-                                        }}
-                                        align="right"
-                                        showRole={false}
-                                      />
-                                    ) : (
-                                      <div className="py-0.5 sm:py-1 md:py-1.5" />
-                                    )}
-                                  </div>
-                                  <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-                                    {sponsor.femalePrincipalSponsor ? (
-                                      <NameItem
-                                        member={{
-                                          name: sponsor.femalePrincipalSponsor,
-                                          roleCategory: "",
-                                          roleTitle: "",
-                                          email: "",
-                                        }}
-                                        align="left"
-                                        showRole={false}
-                                      />
-                                    ) : (
-                                      <div className="py-0.5 sm:py-1 md:py-1.5" />
-                                    )}
-                                  </div>
-                                </React.Fragment>
-                              ))}
+                              {sponsorRows.map((sponsor, idx) => {
+                                const male = sponsor.malePrincipalSponsor
+                                const female = sponsor.femalePrincipalSponsor
+                                const person = (name: string, align: "left" | "center" | "right") => (
+                                  <NameItem
+                                    member={{ name, roleCategory: "", roleTitle: "", email: "" }}
+                                    align={align}
+                                    showRole={false}
+                                  />
+                                )
+                                if (!male || !female) {
+                                  return (
+                                    <div key={`sponsor-row-${idx}`} className="col-span-2 min-w-0 overflow-hidden px-0.5 sm:px-1">
+                                      {person(male || female, "center")}
+                                    </div>
+                                  )
+                                }
+                                return (
+                                  <React.Fragment key={`sponsor-row-${idx}`}>
+                                    <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
+                                      {person(male, "right")}
+                                    </div>
+                                    <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
+                                      {person(female, "left")}
+                                    </div>
+                                  </React.Fragment>
+                                )
+                              })}
                             </TwoColumnLayout>
                           </div>
                         )}
@@ -1108,7 +1186,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                       <div key="Family">
                         {categoryIndex > 0 && (
                           <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                            <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                            <RevealLine />
                           </div>
                         )}
                         <TwoColumnLayout leftTitle="Family of the Groom" rightTitle="Family of the Bride">
@@ -1163,7 +1241,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                     <div key="HonorAttendants">
                       {categoryIndex > 0 && (
                         <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                          <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                          <RevealLine />
                         </div>
                       )}
 
@@ -1182,7 +1260,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
 
                       {manOfHonor.length > 0 && (hasSideHonors || hasMatron) && (
                         <div className="flex justify-center py-1.5 sm:py-2 md:py-2.5 mb-2 sm:mb-2.5 md:mb-3">
-                          <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                          <RevealLine />
                         </div>
                       )}
 
@@ -1226,7 +1304,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
 
                       {hasSideHonors && hasMatron && (
                         <div className="flex justify-center py-1.5 sm:py-2 md:py-2.5 mb-2 sm:mb-2.5 md:mb-3">
-                          <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                          <RevealLine />
                         </div>
                       )}
 
@@ -1259,17 +1337,10 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                     <div key="BearerBlock">
                       {categoryIndex > 0 && (
                         <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                          <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                          <RevealLine />
                         </div>
                       )}
-                      {hasSidePair && (
-                        <TwoColumnLayout
-                          leftTitle={ringBearer.length > 0 ? "Ring Bearer" : undefined}
-                          rightTitle={coinBearer.length > 0 ? "Coin Bearer" : undefined}
-                        >
-                          {renderPairRows("bearer", ringBearer, coinBearer)}
-                        </TwoColumnLayout>
-                      )}
+                      {hasSidePair && renderPairBlock("bearer", "Ring Bearer", ringBearer, "Coin Bearer", coinBearer)}
                       {bibleBearer.length > 0 && (
                         <TwoColumnLayout singleTitle="Bible Bearer" centerContent={true}>
                           <div className="col-span-full">
@@ -1301,15 +1372,10 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                     <div key={pairedSection.key}>
                       {categoryIndex > 0 && (
                         <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                          <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                          <RevealLine />
                         </div>
                       )}
-                      <TwoColumnLayout
-                        leftTitle={leftMembers.length > 0 ? pairedSection.left : undefined}
-                        rightTitle={rightMembers.length > 0 ? pairedSection.right : undefined}
-                      >
-                        {renderPairRows(pairedSection.key, leftMembers, rightMembers)}
-                      </TwoColumnLayout>
+                      {renderPairBlock(pairedSection.key, pairedSection.left, leftMembers, pairedSection.right, rightMembers)}
                     </div>
                   )
                 }
@@ -1326,7 +1392,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                       <div key="LittleOnes">
                         {categoryIndex > 0 && (
                           <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                            <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                            <RevealLine />
                           </div>
                         )}
                         <TwoColumnLayout leftTitle="Little Groom" rightTitle="Little Bride">
@@ -1364,52 +1430,10 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                     <div key="FlowerLadies">
                       {categoryIndex > 0 && (
                         <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                          <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                          <RevealLine />
                         </div>
                       )}
-                      <TwoColumnLayout singleTitle="Flower Girls" centerContent={true}>
-                        {members.length === 2 ? (
-                          <>
-                            <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-                              <NameItem member={members[0]} align="right" />
-                            </div>
-                            <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-                              <NameItem member={members[1]} align="left" />
-                            </div>
-                          </>
-                        ) : (
-                          (() => {
-                            const half = Math.ceil(members.length / 2)
-                            const left = members.slice(0, half)
-                            const right = members.slice(half)
-                            const maxLen = Math.max(left.length, right.length)
-                            const rows = []
-                            for (let i = 0; i < maxLen; i++) {
-                              const l = left[i]
-                              const r = right[i]
-                              rows.push(
-                                <React.Fragment key={`flower-lady-row-${i}`}>
-                                  <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-                                    {l ? (
-                                      <NameItem member={l} align="right" />
-                                    ) : (
-                                      <div className="py-0.5 sm:py-1 md:py-1.5" />
-                                    )}
-                                  </div>
-                                  <div className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-                                    {r ? (
-                                      <NameItem member={r} align="left" />
-                                    ) : (
-                                      <div className="py-0.5 sm:py-1 md:py-1.5" />
-                                    )}
-                                  </div>
-                                </React.Fragment>
-                              )
-                            }
-                            return rows
-                          })()
-                        )}
-                      </TwoColumnLayout>
+                      {renderNameBlock("Flower Ladies", "Flower Girls", members)}
                     </div>
                   )
                 }
@@ -1428,30 +1452,13 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                         <div key="BridalParty">
                           {categoryIndex > 0 && (
                             <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                              <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                              <RevealLine />
                             </div>
                           )}
-                          <TwoColumnLayout singleTitle="Beloved Entourage">
-                            {(() => {
-                              const maxLen = Math.max(bridesmaids.length, groomsmen.length)
-                              const rows = []
-                              for (let i = 0; i < maxLen; i++) {
-                                const groomsman = groomsmen[i]
-                                const bridesmaid = bridesmaids[i]
-                                rows.push(
-                                  <React.Fragment key={`bridal-row-${i}`}>
-                                    <div key={`groomsman-cell-${i}`} className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-                                      {groomsman ? <NameItem member={groomsman} align="right" /> : <div className="py-0.5 sm:py-1 md:py-1.5" />}
-                                    </div>
-                                    <div key={`bridesmaid-cell-${i}`} className="px-0.5 sm:px-1 md:px-1.5 min-w-0 overflow-hidden">
-                                      {bridesmaid ? <NameItem member={bridesmaid} align="left" /> : <div className="py-0.5 sm:py-1 md:py-1.5" />}
-                                    </div>
-                                  </React.Fragment>
-                                )
-                              }
-                              return rows
-                            })()}
-                          </TwoColumnLayout>
+                          <div className="mb-2 sm:mb-2.5 md:mb-3">
+                            <SectionTitle>Beloved Entourage</SectionTitle>
+                          </div>
+                          {renderPairBlock("bridal", "Groomsmen", groomsmen, "Bridesmaids", bridesmaids)}
                         </div>
                       </React.Fragment>
                     )
@@ -1517,7 +1524,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                     <div key="SecondarySponsorBlock">
                       {categoryIndex > 0 && (
                         <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                          <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                          <RevealLine />
                         </div>
                       )}
                       {/* Parent heading */}
@@ -1534,7 +1541,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                   <div key={category}>
                     {categoryIndex > 0 && (
                       <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                            <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                            <RevealLine />
                       </div>
                     )}
                     <TwoColumnLayout singleTitle={displayRoleCategory(category)} centerContent={true}>
@@ -1599,7 +1606,7 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
                 return (
                   <div key={category}>
                     <div className="flex justify-center py-2 sm:py-2.5 md:py-3 mb-2 sm:mb-2.5 md:mb-3">
-                      <div className="w-full max-w-md h-px" style={dividerLineStyle} />
+                      <RevealLine />
                     </div>
                     <TwoColumnLayout singleTitle={displayRoleCategory(category)} centerContent={true}>
                       {(() => {
@@ -1649,5 +1656,6 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
       </div>
       </Section>
     </div>
+    </MotionConfig>
   )
 }
