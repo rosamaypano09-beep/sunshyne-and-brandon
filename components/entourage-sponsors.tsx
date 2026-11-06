@@ -59,8 +59,8 @@ type Done = { title: string; eyebrow: string; name: string; text: string; delete
 const EMPTY_MEMBER = { Name: "", RoleCategory: "", RoleTitle: "", Email: "" }
 const EMPTY_SPONSOR = { MalePrincipalSponsor: "", FemalePrincipalSponsor: "" }
 
-// Suggestions for the role field: the debut's own categories (content/site.ts →
-// entourage.categoryOrder, e.g. Parents of the Debutante, Escort, 18 Roses…) + the
+// Suggestions for the role field: the wedding's categories (content/site.ts →
+// entourage.categoryOrder, e.g. Parents of the Bride, Best Man, Bridesmaids…) + the
 // categories used by the proposal invites
 const DEFAULT_ROLE_CATEGORIES = [
   ...new Set([
@@ -719,7 +719,7 @@ export function EntourageSponsors({
               ? "Loading entourage..."
               : query || roleFilter !== "all"
                 ? "Try a different name or role."
-                : "Add the debut entourage (18 Roses, Candles, Treasures…), or send proposal invites — confirmed roles appear here.",
+                : "Add the wedding entourage (Best Man, Bridesmaids, Bearers…), or send proposal invites — confirmed roles appear here.",
             <Crown className="h-7 w-7" />,
           )
         ) : (
@@ -860,7 +860,7 @@ export function EntourageSponsors({
       {/* ── Forms ──────────────────────────────────────────────────────── */}
       {entourageFormOpen && (
         <FormSheet
-          eyebrow="Debut Entourage"
+          eyebrow="Wedding Entourage"
           title={editingEntourage ? "Edit Member" : "Add Member"}
           subtitle={editingEntourage ? "Update this member's name or role." : "Add someone to your entourage."}
           onClose={closeEntourageForm}
@@ -876,7 +876,7 @@ export function EntourageSponsors({
             ),
             points: [
               <>
-                <span className="font-medium">Role</span> is the group heading they&apos;re listed under (e.g., 18 Roses).
+                <span className="font-medium">Role</span> is the group heading they&apos;re listed under (e.g., Bridesmaids).
               </>,
               <>
                 <span className="font-medium">Title</span> is their own label within the group (e.g., Father, Godmother, Rose 1).

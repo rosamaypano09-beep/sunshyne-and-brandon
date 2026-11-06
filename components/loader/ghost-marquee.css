@@ -13,7 +13,8 @@
   mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 82%, transparent 100%);
 }
 .ghost-marquee__col {
-  --ghost-size: clamp(3.4rem, 17vw, 7rem);
+  /* Phones: sized to sit fully inside the screen edge, so no letter is cut in half */
+  --ghost-size: clamp(2.4rem, 12vw, 5.6rem);
   position: absolute;
   top: 0;
   bottom: 0;
@@ -22,11 +23,11 @@
 }
 /* Left column is turned so it reads bottom → top, like the spine of a book */
 .ghost-marquee__col--left {
-  left: calc(var(--ghost-size) * -0.3);
+  left: 0;
   transform: rotate(180deg);
 }
 .ghost-marquee__col--right {
-  right: calc(var(--ghost-size) * -0.3);
+  right: 0;
 }
 .ghost-marquee__track {
   display: flex;
@@ -39,7 +40,7 @@
 .ghost-marquee__col--right .ghost-marquee__track {
   animation-duration: 52s;
 }
-.ghost-marquee__track span {
+.ghost-marquee__track > span {
   display: block;
   flex: none;
   writing-mode: vertical-rl;
@@ -51,8 +52,15 @@
   color: rgba(243, 220, 159, 0.05);
   -webkit-text-stroke: 1px rgba(243, 220, 159, 0.26);
 }
+/* Symbols and digits: see NON_LETTERS in GhostMarquee.tsx */
+.ghost-marquee__mark {
+  font-family: var(--font-cinzel), Georgia, serif;
+}
 /* Wider screens: the content is narrower than the viewport, so the columns can show in full */
 @media (min-width: 760px) {
+  .ghost-marquee__col {
+    --ghost-size: 7rem;
+  }
   .ghost-marquee__col--left {
     left: 2vw;
   }

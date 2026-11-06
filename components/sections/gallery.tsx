@@ -421,7 +421,7 @@ export function Gallery() {
                 href={gallery.buttonHref}
                 className={`${cinzel.className} inline-flex items-center justify-center rounded-full border px-8 py-3 text-[0.625rem] font-semibold uppercase tracking-[0.18em] transition-all duration-300 hover:scale-[1.03] hover:brightness-110 active:scale-[0.98] sm:text-[0.6875rem] sm:tracking-[0.22em]`}
                 style={{
-                  background: "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)",
+                  background: "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)",
                   borderColor: "color-mix(in srgb, var(--color-welcome-gold) 70%, transparent)",
                   color: "#fff",
                   boxShadow: "0 12px 26px -10px color-mix(in srgb, var(--color-coastal-deep) 70%, transparent)",

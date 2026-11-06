@@ -60,7 +60,7 @@ const BODY = "color-mix(in srgb, var(--color-welcome-text) 85%, var(--color-moti
 const ACCENT = GOLD_INK
 const HAIRLINE = "color-mix(in srgb, var(--color-welcome-gold) 45%, transparent)"
 const TEAL_SOFT = "color-mix(in srgb, var(--color-motif-deep) 60%, transparent)"
-const DEEP_GRADIENT = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const DEEP_GRADIENT = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 const SAGE_GRADIENT = "linear-gradient(180deg, var(--color-motif-deep) 0%, color-mix(in srgb, var(--color-motif-deep) 70%, var(--color-coastal-deep)) 100%)"
 
 const sectionBg = "color-mix(in srgb, var(--color-motif-deep) 70%, var(--color-coastal-deep))"

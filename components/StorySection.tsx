@@ -39,6 +39,8 @@ export type LoveStoryEucalyptusDecos = {
 
 interface StorySectionProps {
   imageSrc?: string
+  // CSS object-position: the part of the photo kept in frame when the card crops it
+  imagePosition?: string
   title?: string
   text: React.ReactNode
   layout: "image-left" | "image-right"
@@ -117,6 +119,7 @@ function PlainChapterDivider({ dark }: { dark: boolean }) {
 
 export const StorySection: React.FC<StorySectionProps> = ({
   imageSrc,
+  imagePosition,
   title,
   text,
   layout,
@@ -250,12 +253,12 @@ export const StorySection: React.FC<StorySectionProps> = ({
                   <div className="group relative aspect-[3/5] w-full overflow-hidden md:aspect-[5/7]">
                     <Image
                       src={imageSrc}
-                      alt="Story moment"
+                      alt={title ?? "Story moment"}
                       fill
                       sizes="(max-width: 768px) 45vw, (max-width: 1024px) 40vw, 33vw"
                       className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                      quality={90}
-                      priority={chapterIndex < 2}
+                      style={{ objectPosition: imagePosition }}
+                      quality={75}
                     />
                     {isDark && (
                       <div className="pointer-events-none absolute inset-0 z-10 bg-black/5 mix-blend-multiply" />

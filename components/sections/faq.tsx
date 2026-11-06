@@ -54,7 +54,7 @@ const IVORY = "var(--color-motif-soft)"
 const GOLD = "var(--color-welcome-gold)"
 const GOLD_INK = "color-mix(in srgb, var(--color-welcome-gold) 78%, var(--color-motif-deep))"
 const BODY = "color-mix(in srgb, var(--color-welcome-text) 85%, var(--color-motif-deep))"
-const BADGE_GRADIENT = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const BADGE_GRADIENT = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 
 const sectionBg = "color-mix(in srgb, var(--color-motif-deep) 70%, var(--color-coastal-deep))"
 

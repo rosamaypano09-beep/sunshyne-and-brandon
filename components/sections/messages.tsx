@@ -13,6 +13,7 @@ import localFont from "next/font/local"
 import { useSiteConfig } from "@/hooks/use-site-config"
 import { fillCelebrant } from "@/lib/celebrant"
 import { layeredSectionTitleSize, sectionType } from "@/lib/section-typography"
+import { RoseBloom } from "@/components/rose-bloom"
 
 
 // Upright, screen-friendly serif for body copy and inputs (same as the My Story paragraphs)
@@ -41,11 +42,11 @@ const aboveTheBeyond = localFont({
 const PAPER = "var(--color-motif-soft)"
 const IVORY = "var(--color-motif-soft)"
 const GOLD = "var(--color-welcome-gold)"
-const GOLD_INK = "color-mix(in srgb, var(--color-welcome-gold) 78%, var(--color-motif-deep))"
+const GOLD_INK = "color-mix(in srgb, var(--color-welcome-botanical) 85%, var(--color-motif-deep))"
 const NAVY = "var(--color-motif-deep)"
 const BODY = "color-mix(in srgb, var(--color-welcome-text) 85%, var(--color-motif-deep))"
 const ACCENT = GOLD_INK
-const BUTTON_GRADIENT = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const BUTTON_GRADIENT = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 
 const palette = {
   body: BODY,
@@ -57,6 +58,8 @@ const palette = {
 const lightLineStyle = {
   background: "linear-gradient(to right, transparent, var(--color-welcome-gold), transparent)",
 } as const
+const fadeInLineStyle = { background: "linear-gradient(to right, transparent, var(--color-welcome-gold))" } as const
+const fadeOutLineStyle = { background: "linear-gradient(to left, transparent, var(--color-welcome-gold))" } as const
 
 // Header sits on the wine Silk backdrop — light text with a soft dark lift.
 const silkTitleShadow =
@@ -94,9 +97,9 @@ const cardStyle = {
     "0 30px 60px -28px color-mix(in srgb, var(--color-coastal-deep) 80%, transparent), inset 0 1px 0 rgb(255 255 255 / 80%)",
 } as const
 
-// Message wall is hidden: guests can still send messages (they go to the Google Form),
-// but the sent messages are not fetched or shown on the page. Set to true to show them again.
-const SHOW_MESSAGE_WALL = false
+// Shows the messages guests have sent (read from the googleAPI.message sheet) under the form.
+// Set to false to keep collecting messages without showing them on the page.
+const SHOW_MESSAGE_WALL = true
 
 interface Message {
   timestamp: string
@@ -111,19 +114,20 @@ interface MessageFormProps {
 
 function OutsideDivider() {
   return (
-    <div className="flex items-center justify-center" aria-hidden>
-      <span className="h-px w-20 sm:w-32" style={lightLineStyle} />
+    <div className="flex items-center justify-center gap-2.5" aria-hidden>
+      <span className="h-px w-14 sm:w-24" style={fadeInLineStyle} />
+      <RoseBloom className="h-5 w-auto sm:h-6" />
+      <span className="h-px w-14 sm:w-24" style={fadeOutLineStyle} />
     </div>
   )
 }
 
 function CardOrnament() {
   return (
-    <div className="mx-auto mb-3 flex items-center justify-center sm:mb-4" aria-hidden>
-      <span
-        className="h-px w-16 sm:w-24"
-        style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold), transparent)" }}
-      />
+    <div className="mx-auto mb-3 flex items-center justify-center gap-2 sm:mb-4" aria-hidden>
+      <span className="h-px w-10 sm:w-16" style={fadeInLineStyle} />
+      <RoseBloom className="h-[1.1rem] w-auto sm:h-5" />
+      <span className="h-px w-10 sm:w-16" style={fadeOutLineStyle} />
     </div>
   )
 }
@@ -135,7 +139,7 @@ function MessagesTitle({ title, script }: { title: string; script: string }) {
       style={
         {
           "--title-size": layeredSectionTitleSize.main,
-          "--script-size": layeredSectionTitleSize.script,
+          "--script-size": "clamp(1.35rem, min(6.6vw, 8cqi), 2.9rem)",
         } as React.CSSProperties
       }
     >
@@ -153,11 +157,13 @@ function MessagesTitle({ title, script }: { title: string; script: string }) {
       </span>
       <span
         aria-hidden
-        className={`${aboveTheBeyond.className} relative z-10 mx-auto mt-1.5 block w-fit max-w-full px-1 leading-[0.88] sm:mt-2 sm:leading-[0.9]`}
+        className={`${aboveTheBeyond.className} relative z-10 mx-auto block w-fit max-w-full px-1 leading-[1.25]`}
         style={{
           fontSize: "var(--script-size)",
           color: GOLD,
           textShadow: silkScriptShadow,
+          // The script's tall letters rise above their line; this keeps them clear of the title
+          marginTop: "0.4em",
         }}
       >
         {script}
@@ -234,8 +240,9 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
       ? palette.accent
       : "color-mix(in srgb, var(--color-welcome-gold) 45%, transparent)"
 
+  // 16px on phones: iOS zooms the whole page when a smaller field is tapped
   const inputClass = (field: string) =>
-    `message-form-input w-full rounded-lg border px-3 py-2 ${lora.className} ${sectionType.text} transition-all duration-300 focus:ring-2 focus:ring-[color-mix(in_srgb,var(--color-welcome-gold)_30%,transparent)] sm:px-4 sm:py-2.5 md:py-3 ${
+    `message-form-input w-full rounded-lg border px-3 py-2 ${lora.className} text-base sm:text-[0.9375rem] md:text-base transition-all duration-300 focus:ring-2 focus:ring-[color-mix(in_srgb,var(--color-welcome-gold)_30%,transparent)] sm:px-4 sm:py-2.5 md:py-3 ${
       focusedField === field ? "shadow-md" : ""
     }`
 
@@ -252,7 +259,7 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
       <Card
         className={`relative w-full overflow-hidden rounded-[1.85rem] border transition-all duration-500 ${
           isFocused ? "scale-[1.01]" : ""
-        } ${isSubmitted ? "animate-bounce" : ""}`}
+        }`}
         style={cardStyle}
       >
         <div
@@ -263,14 +270,15 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
 
         {isSubmitted && (
           <div
-            className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none"
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 pointer-events-none"
             style={{ backgroundColor: PAPER }}
           >
+            <RoseBloom className="h-9 w-auto" />
             <p
-              className={`${cinzel.className} font-semibold ${sectionType.subheader}`}
-              style={{ color: palette.heading }}
+              className={`${aboveTheBeyond.className} px-3 text-[1.9rem] leading-[1.3] sm:text-[2.25rem]`}
+              style={{ color: "var(--color-motif-accent)" }}
             >
-              Sent!
+              Sent with love
             </p>
           </div>
         )}
@@ -377,7 +385,7 @@ function MessageForm({ onSuccess, onMessageSent }: MessageFormProps) {
                   Sending...
                 </span>
               ) : (
-                "Send Message"
+                "Send With Love"
               )}
             </Button>
           </form>
@@ -476,11 +484,11 @@ export function Messages() {
 
         {/* Message wall (hidden — see SHOW_MESSAGE_WALL) */}
         {SHOW_MESSAGE_WALL && (
-        <div className="relative mx-auto max-w-4xl pb-2 sm:pb-3">
+        <div className="relative mx-auto max-w-2xl pb-2 sm:pb-3">
           <SilkTextGlow className="mb-4 text-center sm:mb-6 md:mb-8">
             <h3
-              className={`${theSeasons.className} mb-1.5 font-semibold tracking-[0.08em] uppercase sm:mb-2 ${sectionType.subheader}`}
-              style={{ color: "#fff", textShadow: silkTitleShadow }}
+              className={`${theSeasons.className} mb-1.5 text-balance font-semibold uppercase leading-tight tracking-[0.08em] sm:mb-2`}
+              style={{ color: "#fff", textShadow: silkTitleShadow, fontSize: "clamp(1.1rem, 5vw, 1.75rem)" }}
             >
               {siteConfig.messages.wallTitle}
             </h3>

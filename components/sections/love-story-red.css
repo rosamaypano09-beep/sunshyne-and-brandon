@@ -36,28 +36,28 @@
 
 .love-story-root .plain-bubble--d,
 .gallery-root .plain-bubble--d,
-.red-velvet-root .plain-bubble--d { --red: #4a0710; --red-alpha: 0.85; } /* oxblood */
+.red-velvet-root .plain-bubble--d { --red: #1a2a4e; --red-alpha: 0.85; } /* oxblood */
 .love-story-root .plain-bubble--m,
 .gallery-root .plain-bubble--m,
-.red-velvet-root .plain-bubble--m { --red: #7a0f1a; --red-alpha: 0.8; }  /* wine */
+.red-velvet-root .plain-bubble--m { --red: #2b437a; --red-alpha: 0.8; }  /* wine */
 .love-story-root .plain-bubble--l,
 .gallery-root .plain-bubble--l,
-.red-velvet-root .plain-bubble--l { --red: #a3172a; --red-alpha: 0.55; } /* crimson */
+.red-velvet-root .plain-bubble--l { --red: #3a59a0; --red-alpha: 0.55; } /* crimson */
 .love-story-root .plain-bubble--c,
 .gallery-root .plain-bubble--c,
-.red-velvet-root .plain-bubble--c { --red: #8c1222; --red-alpha: 0.75; } /* garnet */
+.red-velvet-root .plain-bubble--c { --red: #314c8b; --red-alpha: 0.75; } /* garnet */
 .love-story-root .plain-bubble--p,
 .gallery-root .plain-bubble--p,
-.red-velvet-root .plain-bubble--p { --red: #c0283a; --red-alpha: 0.5; }  /* ruby */
+.red-velvet-root .plain-bubble--p { --red: #4d6ebb; --red-alpha: 0.5; }  /* ruby */
 .love-story-root .plain-bubble--b,
 .gallery-root .plain-bubble--b,
-.red-velvet-root .plain-bubble--b { --red: #5e0b16; --red-alpha: 0.8; }  /* burgundy */
+.red-velvet-root .plain-bubble--b { --red: #223461; --red-alpha: 0.8; }  /* burgundy */
 .love-story-root .plain-bubble--r,
 .gallery-root .plain-bubble--r,
-.red-velvet-root .plain-bubble--r { --red: #b81d32; --red-alpha: 0.6; }  /* scarlet */
+.red-velvet-root .plain-bubble--r { --red: #4465b3; --red-alpha: 0.6; }  /* scarlet */
 .love-story-root .plain-bubble--k,
 .gallery-root .plain-bubble--k,
-.red-velvet-root .plain-bubble--k { --red: #d0425a; --red-alpha: 0.4; }  /* rose red */
+.red-velvet-root .plain-bubble--k { --red: #6482ca; --red-alpha: 0.4; }  /* rose red */
 
 /* Corner decorations: crimson instead of antique gold, bright enough to read on wine */
 .love-story-root .invite-section-corner-img,

@@ -136,7 +136,7 @@
 }
 
 .loading-screen.ls-velvet .ls-plain-mote--petal {
-  background: linear-gradient(135deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%);
+  background: linear-gradient(135deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%);
   box-shadow: none;
 }
 
@@ -196,7 +196,7 @@
   to { opacity: 1; transform: none; }
 }
 
-/* Top bar: monogram + "The Debut" left, venue right */
+/* Top bar: monogram + "The Wedding" left, venue right */
 .ls-velvet-topbar {
   display: flex;
   align-items: center;
@@ -363,7 +363,7 @@
     drop-shadow(0 10px 24px color-mix(in srgb, var(--ls-shadow) 45%, transparent));
 }
 
-/* Name + "turns eighteen": identical to the home hero (components/sections/hero.tsx).
+/* Name + "are getting married": identical to the home hero (components/sections/hero.tsx).
    Fonts, sizes, tracking and overlap come from the same classes in LoadingScreen.tsx;
    colors + shadows match .home-hero--photos .home-hero-title-* in loading-screen.css. */
 .ls-hero-title {

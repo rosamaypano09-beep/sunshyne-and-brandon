@@ -2583,7 +2583,7 @@
 }
 
 .env-invite-letter-label__word {
-  background: linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-welcome-navy) 100%);
+  background: linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-welcome-navy) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -2763,7 +2763,7 @@
 }
 
 .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter-label__word {
-  background: linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%);
+  background: linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -2864,19 +2864,19 @@
 
 .env-invite-letter-date__day {
   padding: 0 0.45em;
-  font-family: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-cinzel, "Cinzel", serif);
   font-size: 2.1em;
   font-weight: 500;
   line-height: 1;
   font-variant-numeric: lining-nums;
-  background: linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 60%, color-mix(in srgb, var(--color-welcome-gold) 70%, var(--color-motif-deep)) 100%);
+  background: linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 60%, color-mix(in srgb, var(--color-welcome-gold) 70%, var(--color-motif-deep)) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 /* ---- Paper lettering: bold + high contrast on the ivory card (photos mode) ----
-   Name in The Seasons, "turns eighteen" in Above the Beyond — the same faces
+   Name in The Seasons, "are getting married" in Above the Beyond — the same faces
    as the loading screen and home hero. */
 .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter-label {
   font-weight: 700;
@@ -2972,7 +2972,7 @@
   margin: 0;
 }
 
-/* ---- Lines under the envelope: "14 nights until the eighteenth" + tagline ----
+/* ---- Lines under the envelope: "280 days until happily ever after" + tagline ----
    Elegant italics in sentence case instead of tracked Cinzel capitals.
    Fonts are loaded in Hero.tsx (--env-font-countdown / --env-font-tagline).
    Scoped under .env-invite-screen so they win over the per-breakpoint rules above. */
@@ -3012,11 +3012,11 @@
    gold-lattice liner (also lining the inside once it opens).
    ========================================================================== */
 .env-invite-envelope {
-  --env-highlight: #8d1b2c;
-  --env-base: #7a1526;
-  --env-fold: #66101f;
-  --env-shadow: #4c0a16;
-  --env-envelope: #7a1526;
+  --env-highlight: #38518c;
+  --env-base: #2f467a;
+  --env-fold: #273b68;
+  --env-shadow: #1d2c50;
+  --env-envelope: #2f467a;
   --env-gold: #d9b56a;
   --env-grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 0.9  0 0 0 0 0.85  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   --env-liner:
@@ -3024,7 +3024,7 @@
     radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--env-gold) 35%, transparent) 0 3.5px, transparent 4px) 11px 11px / 22px 22px,
     repeating-linear-gradient(45deg, color-mix(in srgb, var(--env-gold) 20%, transparent) 0 1px, transparent 1px 15.556px),
     repeating-linear-gradient(-45deg, color-mix(in srgb, var(--env-gold) 20%, transparent) 0 1px, transparent 1px 15.556px),
-    radial-gradient(ellipse at 50% 30%, #5a0714 0%, #33020a 100%);
+    radial-gradient(ellipse at 50% 30%, #1e315d 0%, #111d39 100%);
 }
 
 /* Matte front: gentle light from the top-left, no gloss */
@@ -3062,7 +3062,7 @@
 .env-invite-envelope .env-invite-creases line,
 .env-invite-envelope .env-invite-creases line:nth-child(1),
 .env-invite-envelope .env-invite-creases line:nth-child(2) {
-  stroke: rgba(30, 0, 6, 0.35);
+  stroke: rgba(10, 18, 38, 0.35);
 }
 
 /* ---- Two-sided flap ----
@@ -3080,7 +3080,7 @@
    shadow is only applied while the flap is shut (idle / seal press). */
 .env-invite-screen[data-phase="idle"] .env-invite-flap,
 .env-invite-screen[data-phase="seal-press"] .env-invite-flap {
-  filter: drop-shadow(0 3px 2px rgba(25, 0, 5, 0.35)) drop-shadow(0 10px 14px rgba(25, 0, 5, 0.3));
+  filter: drop-shadow(0 3px 2px rgba(9, 16, 33, 0.35)) drop-shadow(0 10px 14px rgba(9, 16, 33, 0.3));
 }
 .env-invite-flap-shadow {
   display: none;
@@ -3241,7 +3241,7 @@
   font-size: 2.7em;
   letter-spacing: 0.05em;
   padding-left: 0.05em;
-  background: linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 62%, color-mix(in srgb, var(--color-welcome-gold) 70%, var(--color-motif-deep)) 100%);
+  background: linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 62%, color-mix(in srgb, var(--color-welcome-gold) 70%, var(--color-motif-deep)) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -3476,8 +3476,8 @@
     linear-gradient(180deg, #fffbf3 0%, var(--color-motif-soft) 55%, var(--color-motif-cream) 100%);
   border: 1px solid color-mix(in srgb, var(--color-welcome-gold) 38%, transparent);
   box-shadow:
-    0 22px 44px rgba(40, 0, 8, 0.34),
-    0 6px 14px rgba(40, 0, 8, 0.2),
+    0 22px 44px rgba(12, 23, 47, 0.34),
+    0 6px 14px rgba(12, 23, 47, 0.2),
     inset 0 0 0 1px rgba(255, 255, 255, 0.65),
     inset 0 0 42px color-mix(in srgb, var(--color-welcome-gold) 12%, transparent);
 }
@@ -3516,7 +3516,7 @@
   opacity: 0.075;
 }
 
-/* "THE DEBUT OF" in gold foil */
+/* "THE WEDDING OF" in gold foil */
 .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter-eyebrow {
   background: linear-gradient(180deg, color-mix(in srgb, var(--color-welcome-gold) 70%, #fff3cf) 0%, var(--paper-gold) 55%, color-mix(in srgb, var(--color-welcome-gold) 60%, var(--color-motif-deep)) 100%);
   -webkit-background-clip: text;
@@ -3534,9 +3534,9 @@
   border-color: var(--paper-gold);
 }
 
-/* "Bea": deep wine into gold foil */
+/* The names: deep wine into gold foil */
 .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter-title .env-invite-letter-title__main {
-  background: linear-gradient(170deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 55%, var(--paper-gold) 100%);
+  background: linear-gradient(170deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 55%, var(--paper-gold) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -3600,13 +3600,13 @@
   }
 }
 
-/* Invitation line under "You're Invited" — soft italic serif */
+/* Invitation line under "You're Invited" — Cinzel, same engraved face as the date */
 .env-invite-letter-line {
   max-width: 21em;
   margin-top: 0.15em;
-  font-family: var(--env-font-tagline), "Lora", Georgia, serif;
+  font-family: var(--font-cinzel, "Cinzel", serif);
   font-size: 0.86em;
-  font-style: italic;
+  letter-spacing: 0.02em;
   line-height: 1.45;
   text-align: center;
   text-wrap: balance;
@@ -3634,7 +3634,7 @@
   font-size: 0.82em;
   line-height: 1.4;
 }
-/* "Bea": room above and below for the swashes, without extra gap */
+/* The names: room above and below for the swashes, without extra gap */
 .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-title .env-invite-letter-title__main {
   padding: 0.14em 0.3em 0.1em;
   line-height: 0.95;
@@ -3679,7 +3679,7 @@
   }
 }
 
-/* ---- "Bea": no clipped swashes ----
+/* ---- The names: no clipped swashes ----
    The gold-wine fill is background-clip:text, which only paints inside the
    element's padding box. The script's tall "B" and its lower loops reach past
    the line box, so give the box generous padding and pull it back with equal
@@ -3692,7 +3692,7 @@
   overflow: visible;
 }
 
-/* ---- "Bea": solid ink instead of a clipped gradient ----
+/* ---- The names: solid ink instead of a clipped gradient ----
    background-clip:text still cut the tall "B" swash, so the name is set in a
    solid wine colour (never clipped) with a white edge highlight and a soft gold
    glow for the foil feel. The top padding keeps the space under the invitation line. */
@@ -3702,11 +3702,47 @@
   background: none;
   -webkit-background-clip: border-box;
   background-clip: border-box;
-  color: color-mix(in srgb, var(--color-motif-accent) 55%, var(--color-motif-deep));
+  font-size: 2.5em;
+  color: var(--color-motif-deep);
   -webkit-text-fill-color: currentColor;
-  -webkit-text-stroke: 0.01em currentColor;
+  -webkit-text-stroke: 0;
   text-shadow:
     0 1px 0 rgba(255, 255, 255, 0.85),
     0 0 14px color-mix(in srgb, var(--color-welcome-gold) 35%, transparent);
   filter: none;
+}
+/* Phones: sized so the date stays clear of the envelope's front flap */
+@media (max-width: 767px) {
+  .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-title .env-invite-letter-title__main {
+    font-size: 2em;
+  }
+}
+
+/* The gap clears the first line's descenders so neither name runs into the other */
+.env-invite-letter-title__line {
+  display: block;
+  white-space: nowrap;
+}
+.env-invite-letter-title__line + .env-invite-letter-title__line {
+  margin-top: 0.28em;
+}
+
+/* ---- Couple's name lettering (image) on the paper card ---- */
+.env-invite-letter-title__image {
+  display: block;
+  width: min(100%, 15em);
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 1px 0 rgba(120, 88, 30, 0.35));
+}
+/* Phones: shorter lettering so the date clears the envelope's front flap */
+@media (max-width: 767px) {
+  .env-invite-letter-title__image {
+    width: min(70%, 11em);
+  }
+}
+
+/* The envelope is midnight blue, so the hint sits in light type at every size */
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-hint {
+  color: var(--color-welcome-blush);
 }

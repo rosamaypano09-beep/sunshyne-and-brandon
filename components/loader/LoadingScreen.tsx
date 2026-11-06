@@ -124,6 +124,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete, onFade
   const elapsedRef = useRef(0);
 
   const name = fill(gala.title);
+  // "Sunshyne & Brandon" → two lines: the script is too wide for one on a phone
+  const nameLines = name.split(/\s(?=&)/);
   const ghostText = (gala.ghostText ?? []).map((t) => fill(t)).filter(Boolean).join('  ·  ');
 
   useEffect(() => {
@@ -307,36 +309,19 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete, onFade
           )}
           <GoldRule />
           <h1 className="gala__title" aria-label={name}>
-            {/* Nickname in gold script, with a soft glow behind it */}
+            {/* The names in gold script, with a soft glow behind them */}
             <span className="gala__name-wrap" aria-hidden="true">
-              <span className="gala__name gala-script gala-gold">
-                {name}
-              </span>
+              {nameLines.map((line) => (
+                <span key={line} className="gala__name gala-script gala-gold">
+                  {line}
+                </span>
+              ))}
             </span>
           </h1>
+          {gala.promise && <p className="gala__promise">{gala.promise}</p>}
         </header>
 
         <div className="gala__stage">
-          {gala.taglineLeft.length > 0 && (
-            <div className="gala__tagline gala__tagline--left">
-              <p>
-                {gala.taglineLeft.map((line) => (
-                  <span key={line}>{line}</span>
-                ))}
-              </p>
-              <GoldRule />
-            </div>
-          )}
-          {gala.taglineRight.length > 0 && (
-            <div className="gala__tagline gala__tagline--right">
-              <p>
-                {gala.taglineRight.map((line) => (
-                  <span key={line}>{line}</span>
-                ))}
-              </p>
-              <GoldRule />
-            </div>
-          )}
           {gala.photo && (
             <div className="gala__photo">
               <Image
@@ -359,26 +344,28 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete, onFade
           )}
           <h2
             className="gala__occasion"
-            aria-label={`${gala.occasionNumber}${gala.occasionSuffix} ${gala.occasion}`}
+            aria-label={`${gala.occasionNumber}${gala.occasionSuffix} ${gala.occasion}`.trim()}
           >
             {/* Each piece carries its own gold fill — background-clip text doesn't reach nested elements */}
-            <span className="gala__age" aria-hidden="true">
-              <span className="gala__age-num gala-gold">{gala.occasionNumber}</span>
-              {gala.occasionSuffix && (
-                <span className="gala__age-suffix">
-                  <span className="gala-gold">{gala.occasionSuffix}</span>
-                </span>
-              )}
-            </span>
-            {/* Script line overlapping the age, like the hero title */}
+            {gala.occasionNumber && (
+              <span className="gala__age" aria-hidden="true">
+                <span className="gala__age-num gala-gold">{gala.occasionNumber}</span>
+                {gala.occasionSuffix && (
+                  <span className="gala__age-suffix">
+                    <span className="gala-gold">{gala.occasionSuffix}</span>
+                  </span>
+                )}
+              </span>
+            )}
+            {/* Script line under the number, like the hero title */}
             <span className="gala__occasion-script-wrap" aria-hidden="true">
               <span className="gala__occasion-script gala-script gala-gold">{gala.occasion}</span>
             </span>
           </h2>
-          {/* Full name in engraved caps under "18th Birthday" */}
-          {gala.subtitle && (
+          {/* Date and place under the occasion */}
+          {gala.dateLine && (
             <p className="gala__fullname">
-              <span className="gala-gold">{fill(gala.subtitle)}</span>
+              <span className="gala-gold">{gala.dateLine}</span>
             </p>
           )}
           <GoldRule />

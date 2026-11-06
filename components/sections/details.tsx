@@ -9,10 +9,11 @@ import type { AttireColor } from "@/content/site"
 import Image from "next/image"
 import localFont from "next/font/local"
 import { cinzel } from "@/lib/fonts"
-import { Shirt, Copy, Check, Navigation, Heart, MapPin } from "lucide-react"
+import { Shirt, Copy, Check, Navigation, MapPin } from "lucide-react"
 import { motion, useReducedMotion, type Variants } from "motion/react"
 import { PlainBubbles } from "@/components/loader/PlainBubbles"
 import { RisingMotes } from "@/components/rising-motes"
+import { RoseBloom } from "@/components/rose-bloom"
 import { GhostMarquee } from "@/components/loader/GhostMarquee"
 import { ghostTextFor } from "@/lib/ghost-text"
 import "@/components/loader/loading-screen.css"
@@ -34,13 +35,13 @@ const aboveTheBeyond = localFont({
 // Red velvet vibe (same as My Story + Gallery): white + gold text on the red circle
 // pattern; the venue / attire / reminder cards stay ivory paper with wine + gold ink.
 // Circle colors + blur: components/sections/love-story-red.css (.red-velvet-root); gold dust rises behind the content
-const GOLD_INK = "color-mix(in srgb, var(--color-welcome-gold) 78%, var(--color-motif-deep))"
+const GOLD_INK = "color-mix(in srgb, var(--color-welcome-botanical) 85%, var(--color-motif-deep))"
 const C = {
   heading: "var(--color-motif-deep)",
   body: "color-mix(in srgb, var(--color-welcome-text) 88%, var(--color-motif-deep))",
   soft: "color-mix(in srgb, var(--color-welcome-text) 70%, var(--color-motif-deep))",
   label: GOLD_INK,
-  script: GOLD_INK,
+  script: "var(--color-motif-accent)",
   accent: "var(--color-motif-accent)",
   green: "var(--color-motif-deep)",
   paper: "var(--color-motif-soft)",
@@ -104,8 +105,8 @@ function DetailsTitle({ title, subtitle }: { title: string; subtitle: string }) 
       className="relative mx-auto w-full max-w-full text-center"
       style={
         {
-          "--title-size": "clamp(2.15rem, 11vw, 4.5rem)",
-          "--script-size": "clamp(1.1rem, 4.5vw, 2.25rem)",
+          "--title-size": "clamp(1.85rem, 9.5vw, 4.5rem)",
+          "--script-size": "clamp(1.35rem, 6.6vw, 2.9rem)",
         } as React.CSSProperties
       }
     >
@@ -117,8 +118,9 @@ function DetailsTitle({ title, subtitle }: { title: string; subtitle: string }) 
       </span>
       <span
         aria-hidden
-        className={`${aboveTheBeyond.className} mx-auto block w-fit max-w-full px-1 leading-[0.88] sm:leading-[0.9] mt-2 sm:mt-2.5 md:mt-3`}
-        style={{ fontSize: "var(--script-size)", ...onBgGold }}
+        className={`${aboveTheBeyond.className} mx-auto block w-fit max-w-full px-1 leading-[1.25]`}
+        // marginTop: the script's tall letters rise above their line; this keeps them clear of the title
+        style={{ fontSize: "var(--script-size)", marginTop: "0.4em", ...onBgGold }}
       >
         {subtitle}
       </span>
@@ -131,16 +133,16 @@ function DetailsTitle({ title, subtitle }: { title: string; subtitle: string }) 
 const ct = {
   label: "text-[11px] sm:text-xs md:text-sm",
   labelSm: "text-[10px] sm:text-[11px] md:text-xs",
-  body: "text-xs sm:text-sm md:text-base",
+  body: "text-[0.8125rem] sm:text-sm md:text-base",
   bodyLg: "text-sm sm:text-base md:text-lg",
   month: "text-base sm:text-xl md:text-2xl lg:text-3xl",
   dayNum: "text-2xl sm:text-4xl md:text-5xl lg:text-6xl",
   year: "text-base sm:text-xl md:text-2xl lg:text-3xl",
-  sectionTitle: "text-sm sm:text-lg md:text-xl lg:text-2xl",
+  sectionTitle: "text-lg sm:text-xl md:text-2xl lg:text-3xl",
   attireCardTitle: "text-sm sm:text-lg md:text-xl lg:text-2xl",
   btn: "text-xs sm:text-sm md:text-base",
   reminderHead: "text-[0.8rem] sm:text-sm md:text-base",
-  reminderBody: "text-xs sm:text-sm md:text-[0.95rem]",
+  reminderBody: "text-[0.8125rem] sm:text-sm md:text-[0.95rem]",
 } as const
 
 type PaletteColor = { name: string; hex: string }
@@ -171,7 +173,7 @@ function DressCodePaletteHeader({
           {title}
         </h5>
         <p
-          className={`${aboveTheBeyond.className} mt-1 text-lg leading-none sm:mt-1.5 sm:text-xl md:text-2xl`}
+          className={`${aboveTheBeyond.className} mt-2 text-[1.35rem] leading-[1.3] sm:text-2xl md:text-[1.75rem]`}
           style={{ color: C.script }}
         >
           {subtitle}
@@ -179,17 +181,17 @@ function DressCodePaletteHeader({
 
         <div className="mx-auto mt-3 flex max-w-xs items-center justify-center gap-2 sm:mt-4 sm:max-w-sm md:max-w-md">
           <span className="h-px flex-1" style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold))" }} />
-          <Heart className="h-2.5 w-2.5 shrink-0 sm:h-3 sm:w-3" style={{ color: C.accent, fill: C.accent }} aria-hidden />
+          <RoseBloom className="h-4 w-auto shrink-0 sm:h-5" />
           <span className="h-px flex-1" style={{ background: "linear-gradient(to left, transparent, var(--color-welcome-gold))" }} />
         </div>
 
         <p
-          className={`${cinzel.className} mt-3 text-[10px] font-bold uppercase tracking-[0.12em] sm:mt-4 sm:text-xs md:text-sm`}
+          className={`${cinzel.className} mt-3 text-[11px] font-bold uppercase tracking-[0.12em] sm:mt-4 sm:text-xs md:text-sm`}
           style={{ color: C.label }}
         >
           {guideTitle}
         </p>
-        <p className="font-goudy-italic mt-1.5 text-[10px] italic leading-relaxed sm:mt-2 sm:text-xs md:text-sm" style={{ color: C.body }}>
+        <p className="font-goudy-italic mt-1.5 text-[0.8125rem] italic leading-relaxed sm:mt-2 sm:text-sm" style={{ color: C.body }}>
           {guideNote}
         </p>
       </div>
@@ -338,13 +340,19 @@ function PhotoDeck({
   )
 }
 
-function FadeRule({ className = "" }: { className?: string }) {
+function RoseRule({ className = "" }: { className?: string }) {
   return (
-    <span
-      className={`mx-auto block h-px w-24 sm:w-32 ${className}`}
-      style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold), transparent)" }}
-      aria-hidden
-    />
+    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden>
+      <span
+        className="h-px w-12 sm:w-16"
+        style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold))" }}
+      />
+      <RoseBloom className="h-4 w-auto sm:h-5" />
+      <span
+        className="h-px w-12 sm:w-16"
+        style={{ background: "linear-gradient(to left, transparent, var(--color-welcome-gold))" }}
+      />
+    </div>
   )
 }
 
@@ -449,15 +457,16 @@ function AttireCard({
         ) : null}
 
         {image ? (
-          <div className="relative flex w-full shrink-0 items-center justify-center overflow-hidden" style={{ background: C.light }}>
+          <div className={`relative flex w-full shrink-0 items-center justify-center overflow-hidden px-3 sm:px-5 ${title ? "" : "pt-5 sm:pt-7"}`}>
             {/* Any image shape works: the 3/2 size is only a placeholder until the
-                file loads, then h-auto switches to the image's real proportions */}
+                file loads, then h-auto switches to the image's real proportions.
+                The clip hides the stray gold line along the bottom edge of guestAttire.png */}
             <Image
               src={image}
               alt={alt}
               width={1500}
               height={1000}
-              className="h-auto w-full object-contain transition-transform duration-700 group-hover:scale-[1.01]"
+              className="h-auto w-full object-contain transition-transform duration-700 [clip-path:inset(0_0_0.5%_0)] group-hover:scale-[1.01]"
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 80vw, 1024px"
             />
           </div>
@@ -610,9 +619,7 @@ function EventVenueCard({
                     isActive && images.length > 1 ? "scale-[1.08] group-hover:scale-[1.12]" : "scale-100"
                   }`}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px"
-                  // Load every slide up front so the next one is ready before it fades in
-                  priority={index === 0}
-                  loading={index === 0 ? undefined : "eager"}
+                  // Lazy: this card is far down the page, and every slide starts loading together as it nears the screen
                 />
               </div>
             )
@@ -746,7 +753,7 @@ function EventVenueCard({
               onClick={() => onOpenMaps(mapsLink)}
               className={`${cinzel.className} flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2.5 sm:py-3 md:py-3.5 rounded-full border font-semibold uppercase tracking-[0.12em] ${ct.btn} transition-all duration-300 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]`}
               style={{
-                background: "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)",
+                background: "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)",
                 borderColor: "color-mix(in srgb, var(--color-welcome-gold) 65%, transparent)",
                 color: "#fff",
                 boxShadow: "0 12px 24px -10px color-mix(in srgb, var(--color-coastal-deep) 65%, transparent)",
@@ -899,7 +906,7 @@ export function Details() {
           </p>
 
           <div className="mt-4 sm:mt-5">
-            <SectionIconDivider icon={<MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color: "var(--color-welcome-gold)" }} aria-hidden />} />
+            <SectionIconDivider icon={<RoseBloom className="h-3.5 w-auto sm:h-4" />} />
           </div>
         </div>
 
@@ -1076,7 +1083,7 @@ export function Details() {
                   <p className={`font-goudy-italic ${ct.body} mx-auto mt-1.5 max-w-md leading-relaxed`} style={{ color: C.soft }}>
                     {reminders.description}
                   </p>
-                  <FadeRule className="mt-3.5 sm:mt-4" />
+                  <RoseRule className="mt-3.5 sm:mt-4" />
                 </motion.div>
 
                 <div className="mt-5 w-full sm:mt-6">

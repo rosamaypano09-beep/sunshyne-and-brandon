@@ -10,6 +10,7 @@ import { cinzel } from "@/lib/fonts"
 import { ArrowRight, BookOpen, X } from "lucide-react"
 import { sectionType } from "@/lib/section-typography"
 import { useSiteConfig } from "@/hooks/use-site-config"
+import { RoseBloom } from "@/components/rose-bloom"
 
 
 // Upright, screen-friendly serif for the messages (italic for the quote feel)
@@ -20,16 +21,17 @@ const lora = Lora({
   display: "swap",
 })
 
-// Message cards: ivory paper with wine names, gold dates / quote marks and crimson → wine
-// buttons (same vibe as the other cards). TEAL keeps its template name but is now wine.
+// Message cards: storybook pages in ivory, with midnight names, antique gold dates, crimson quote
+// marks and a small enchanted rose. TEAL keeps its template name but is now midnight blue.
 const TEAL = "var(--color-motif-deep)"
-const BUTTON = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const BUTTON = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 const BUTTON_EDGE = "color-mix(in srgb, var(--color-welcome-gold) 60%, transparent)"
 const PAPER =
   "radial-gradient(120% 50% at 50% 0%, color-mix(in srgb, white 70%, transparent) 0%, transparent 60%), linear-gradient(180deg, var(--color-motif-soft) 0%, var(--color-motif-cream) 100%)"
 const IVORY = "var(--color-motif-soft)"
 const GOLD = "var(--color-welcome-gold)"
-const GOLD_INK = "color-mix(in srgb, var(--color-welcome-gold) 78%, var(--color-motif-deep))"
+const GOLD_INK = "color-mix(in srgb, var(--color-welcome-botanical) 85%, var(--color-motif-deep))"
+const ROSE = "var(--color-motif-accent)"
 const NAVY = TEAL
 const BODY = "color-mix(in srgb, var(--color-welcome-text) 85%, var(--color-motif-deep))"
 const ACCENT = GOLD_INK
@@ -197,6 +199,9 @@ function MessageCard({
         />
       )}
 
+      {/* Enchanted rose (the popup keeps this corner for its close button) */}
+      {!full && <RoseBloom className="pointer-events-none absolute right-4 top-4 h-4 w-auto opacity-90 sm:right-5 sm:top-5 sm:h-5" />}
+
       {/* Watermark quote mark */}
       <span
         aria-hidden
@@ -243,7 +248,7 @@ function MessageCard({
         <div className="relative z-10 pl-5 pr-1 sm:pl-6 sm:pr-3">
           <span
             className={`${lora.className} absolute left-0 top-0 select-none text-2xl italic leading-none sm:text-3xl`}
-            style={{ color: GOLD_INK, opacity: 0.85 }}
+            style={{ color: ROSE, opacity: 0.85 }}
             aria-hidden
           >
             &ldquo;
@@ -393,30 +398,19 @@ export default function MessageWallDisplay({ messages, loading, freshKey = null 
         className="rounded-[1.85rem] border px-4 py-8 text-center sm:py-12 md:py-16"
         style={messageCardStyle}
       >
+        <RoseBloom className="mx-auto mb-3 h-8 w-auto sm:mb-4 sm:h-10" />
         <h3
           className={`${cinzel.className} mb-2 font-semibold uppercase tracking-[0.16em] sm:mb-3 ${sectionType.subheader}`}
           style={{ color: NAVY }}
         >
-          No messages yet
+          {siteConfig.messageWall.emptyTitle}
         </h3>
         <p
-          className={`${lora.className} mx-auto mb-5 max-w-md italic sm:mb-6 ${sectionType.textRelaxed}`}
+          className={`${lora.className} mx-auto max-w-md italic ${sectionType.textRelaxed}`}
           style={{ color: BODY }}
         >
           {siteConfig.messageWall.emptyText}
         </p>
-        <div className="flex justify-center">
-          <span
-            className={`${cinzel.className} ${sectionType.label} rounded-full border px-4 py-2 font-semibold uppercase tracking-[0.16em]`}
-            style={{
-              color: "#fff",
-              background: BUTTON,
-              borderColor: BUTTON_EDGE,
-            }}
-          >
-            Your message will appear here
-          </span>
-        </div>
       </div>
     )
   }

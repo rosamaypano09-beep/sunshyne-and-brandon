@@ -52,7 +52,7 @@ const BUTTON = "var(--color-motif-accent)"
 const IVORY = "var(--color-motif-soft)"
 const PAPER =
   "radial-gradient(120% 50% at 50% 0%, color-mix(in srgb, white 70%, transparent) 0%, transparent 60%), linear-gradient(180deg, var(--color-motif-soft) 0%, var(--color-motif-cream) 100%)"
-const DEEP_GRADIENT = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const DEEP_GRADIENT = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 const SAGE_GRADIENT = "linear-gradient(180deg, var(--color-motif-deep) 0%, color-mix(in srgb, var(--color-motif-deep) 70%, var(--color-coastal-deep)) 100%)"
 const GOLD = "var(--color-welcome-gold)"
 const GOLD_INK = "color-mix(in srgb, var(--color-welcome-gold) 78%, var(--color-motif-deep))"

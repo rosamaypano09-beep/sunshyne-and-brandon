@@ -1,17 +1,17 @@
-// Sage Green Botanical motif (mirrors app/globals.css)
+// Midnight blue + ivory motif (mirrors app/globals.css)
 export const sectionPalette = {
-  forest: "#4F674D", // --color-motif-deep
-  sage: "#AAB9A0", // --color-motif-medium
-  mustard: "#C3CFB8", // --color-motif-blush (sage beige)
-  butter: "#DDE5D4", // --color-motif-silver (pale sage)
-  cream: "#F4F5EA", // --color-motif-cream
+  forest: "#14264F", // --color-motif-deep
+  sage: "#C9A45C", // --color-motif-medium
+  mustard: "#E8D9B5", // --color-motif-blush (sage beige)
+  butter: "#E3E6EE", // --color-motif-silver (pale sage)
+  cream: "#F5EFE3", // --color-motif-cream
 } as const
 
 export const sectionBackground = `
   radial-gradient(920px 520px at 50% 8%, color-mix(in srgb, ${sectionPalette.butter} 35%, transparent) 0%, transparent 55%),
   radial-gradient(640px 420px at 12% 88%, color-mix(in srgb, ${sectionPalette.sage} 16%, transparent) 0%, transparent 58%),
   radial-gradient(560px 380px at 92% 78%, color-mix(in srgb, ${sectionPalette.mustard} 14%, transparent) 0%, transparent 55%),
-  linear-gradient(180deg, ${sectionPalette.cream} 0%, #FBFCF7 48%, ${sectionPalette.cream} 100%)
+  linear-gradient(180deg, ${sectionPalette.cream} 0%, #FCFAF6 48%, ${sectionPalette.cream} 100%)
 `.trim()
 
 export const sectionText = {

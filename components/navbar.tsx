@@ -115,7 +115,7 @@ export function Navbar() {
       }`}
       style={{
         background:
-          "linear-gradient(180deg, color-mix(in srgb, var(--color-motif-accent) 88%, white) 0%, var(--color-motif-accent) 42%, var(--color-motif-deep) 100%)",
+          "linear-gradient(180deg, color-mix(in srgb, var(--color-motif-royal) 88%, white) 0%, var(--color-motif-royal) 42%, var(--color-motif-deep) 100%)",
         borderBottom:
           "1px solid color-mix(in srgb, var(--color-welcome-navy) 28%, transparent)",
       }}

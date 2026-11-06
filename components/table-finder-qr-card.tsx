@@ -92,7 +92,7 @@ export function TableFinderQrCard() {
 
   const coupleLine = celebrantName(siteConfig)
   const fill = (text: string) => fillCelebrant(text, siteConfig)
-  const fileSlug = `${coupleLine.replace(/\s+/g, "")}-debut`
+  const fileSlug = `${coupleLine.replace(/\s+/g, "")}-wedding`
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
@@ -108,7 +108,7 @@ export function TableFinderQrCard() {
     if (!canvas) return
 
     const link = document.createElement("a")
-    link.download = `${fileSlug || "debut"}-find-your-table-qr.png`
+    link.download = `${fileSlug || "wedding"}-find-your-table-qr.png`
     link.href = canvas.toDataURL("image/png")
     link.click()
   }

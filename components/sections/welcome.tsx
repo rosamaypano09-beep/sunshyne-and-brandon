@@ -20,47 +20,74 @@ const aboveTheBeyond = localFont({
   variable: "--font-above-beyond",
 })
 
-// Welcome letter palette (colors from app/globals.css): wine headings, gold accents, warm ink body
+// Storybook-page palette (colors from app/globals.css): midnight blue, crimson rose and antique
+// gold on soft ivory. Small gold text uses the darker botanical gold so it stays readable on ivory.
 const WELCOME_COLORS = {
-  wine: "var(--color-motif-deep)",
-  gold: "color-mix(in srgb, var(--color-welcome-gold) 82%, var(--color-motif-deep))",
+  midnight: "var(--color-motif-deep)",
+  rose: "var(--color-motif-accent)",
+  gold: "color-mix(in srgb, var(--color-welcome-botanical) 85%, var(--color-motif-deep))",
   ink: "color-mix(in srgb, var(--color-welcome-text) 88%, var(--color-motif-deep))",
   hairline: "color-mix(in srgb, var(--color-welcome-gold) 45%, transparent)",
 } as const
 
-function OrnamentalDivider({ compact = false }: { compact?: boolean }) {
+// The enchanted rose under its glass dome, between two gold rules, petals falling inside the glass
+function EnchantedRose() {
   return (
-    <div className={`flex items-center justify-center ${compact ? "gap-1.5" : "gap-2"}`}>
+    <div className="flex items-center justify-center gap-3 sm:gap-5" aria-hidden>
       <span
-        className={`h-px ${compact ? "w-6 sm:w-10" : "w-8 sm:w-12"}`}
-        style={{
-          background:
-            "linear-gradient(to right, transparent, var(--color-welcome-gold))",
-        }}
+        className="h-px w-10 sm:w-24"
+        style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold))" }}
       />
+      <svg viewBox="0 0 64 84" className="h-20 w-auto sm:h-24" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <defs>
+          <radialGradient id="welcome-rose-glow">
+            <stop offset="0%" stopColor="var(--color-welcome-gold)" stopOpacity={0.42} />
+            <stop offset="100%" stopColor="var(--color-welcome-gold)" stopOpacity={0} />
+          </radialGradient>
+        </defs>
+        <circle cx="32" cy="33" r="27" fill="url(#welcome-rose-glow)" />
+        <g transform="translate(12 18) scale(1.25)">
+          <g stroke="var(--color-welcome-botanical)" strokeWidth={0.9}>
+            <path d="M16 15v25" />
+            <path d="M16 23c-3 0-5-1.5-6-4 3 0 5 1.5 6 4ZM16 28c2.5 0 4.5-1.3 5.5-3.5-2.6 0-4.6 1.3-5.5 3.5Z" />
+          </g>
+          <path
+            d="M16 15c-4 0-6.5-2.8-6.5-6.2C11.5 7 13 6.5 14 7c.5-2 3.5-2.5 4.5-.5 1.2-.6 3 .2 3 2.3C21.5 12.2 19.5 15 16 15Z"
+            fill="var(--color-motif-accent)"
+            stroke="var(--color-welcome-gold)"
+            strokeWidth={0.6}
+          />
+          <path d="M14 7c.5 2 2.5 3 4.5 2.5" stroke="var(--color-welcome-gold)" strokeWidth={0.6} />
+        </g>
+        <g fill="var(--color-motif-accent)">
+          <path d="M21 50c-1.3-.3-2-1.3-1.8-2.5 1.3.2 2.2 1.2 1.8 2.5Z" />
+          <path d="M43 59c1.3-.2 2.2-1.1 2.2-2.4-1.3 0-2.4 1-2.2 2.4Z" />
+          <path d="M39 69c1.2.4 2.4 0 3-1-1.1-.6-2.4-.3-3 1Z" />
+        </g>
+        <g stroke="var(--color-welcome-botanical)" strokeWidth={1.1}>
+          <path d="M14 70V30C14 16 22 8 32 8s18 8 18 22v40" />
+          <circle cx="32" cy="5.5" r="2.2" />
+          <path d="M10 70h44l2 5H8l2-5ZM12 75v3h40v-3" />
+        </g>
+        <path d="M19 60V31c0-7 3-12 8-15" stroke="var(--color-welcome-gold)" strokeWidth={0.9} opacity={0.6} />
+      </svg>
       <span
-        className="h-1 w-1 rotate-45 sm:h-1.5 sm:w-1.5"
-        style={{ background: "var(--color-welcome-gold)" }}
-        aria-hidden
-      />
-      <span
-        className={`h-px ${compact ? "w-6 sm:w-10" : "w-8 sm:w-12"}`}
-        style={{
-          background:
-            "linear-gradient(to left, transparent, var(--color-welcome-gold))",
-        }}
+        className="h-px w-10 sm:w-24"
+        style={{ background: "linear-gradient(to left, transparent, var(--color-welcome-gold))" }}
       />
     </div>
   )
 }
 
-// Three-tier lockup: serif caps title → small-caps connector between gold rules →
-// large gold script. Each tier has its own line so the script never collides with the caps.
+// Storybook lockup: small caps kicker → midnight serif caps title → small-caps connector between
+// gold rules → large crimson script. Each tier has its own line so the script never collides with the caps.
 function LayeredWelcomeTitle({
+  kicker,
   title,
   connector,
   script,
 }: {
+  kicker?: string
   title: string
   connector?: string
   script: string
@@ -70,17 +97,26 @@ function LayeredWelcomeTitle({
       className="welcome-title-lockup relative mx-auto flex w-full max-w-full flex-col items-center text-center"
       style={
         {
-          "--welcome-size": "clamp(2.1rem, min(11vw, 15cqi), 4.75rem)",
+          "--welcome-size": "clamp(1.9rem, min(10vw, 12.5cqi), 4.5rem)",
           "--connector-size": "clamp(0.6rem, min(2.6vw, 3cqi), 0.95rem)",
-          "--script-size": "clamp(2.4rem, min(13vw, 17cqi), 5.25rem)",
+          "--script-size": "clamp(2.4rem, min(15vw, 16cqi), 5.75rem)",
         } as React.CSSProperties
       }
     >
+      {kicker ? (
+        <span
+          className={`${cinzel.className} ${sectionType.label} mb-3 block font-semibold uppercase tracking-[0.28em] sm:mb-4 sm:tracking-[0.34em]`}
+          style={{ color: WELCOME_COLORS.gold, marginRight: "-0.28em" }}
+        >
+          {kicker}
+        </span>
+      ) : null}
+
       <span
         className={`${theSeasons.className} block uppercase leading-none tracking-[0.14em] min-[400px]:tracking-[0.18em] sm:tracking-[0.22em]`}
         style={{
           fontSize: "var(--welcome-size)",
-          color: WELCOME_COLORS.wine,
+          color: WELCOME_COLORS.midnight,
           // tracking adds trailing space after the last letter — nudge back to true center
           marginRight: "-0.18em",
         }}
@@ -110,10 +146,14 @@ function LayeredWelcomeTitle({
       ) : null}
 
       <span
-        className={`${aboveTheBeyond.className} relative z-10 mx-auto -mt-1 block w-fit max-w-full px-2 leading-[1.1] sm:-mt-0.5`}
+        className={`${aboveTheBeyond.className} relative z-10 mx-auto block w-fit max-w-full whitespace-nowrap px-2 leading-[1.1]`}
         style={{
           fontSize: "var(--script-size)",
-          color: WELCOME_COLORS.gold,
+          color: WELCOME_COLORS.rose,
+          // The script's capitals rise above its line box and the "y" drops below it;
+          // these keep them clear of the connector above and the rose below
+          marginTop: "0.45em",
+          marginBottom: "0.3em",
         }}
       >
         {script}
@@ -148,8 +188,8 @@ export function Welcome() {
           }}
         >
           <div
-            className="wedding-frame-inner hidden min-[400px]:block"
-            style={{ borderColor: "color-mix(in srgb, var(--color-welcome-gold) 30%, transparent)" }}
+            className="wedding-frame-inner"
+            style={{ borderColor: "color-mix(in srgb, var(--color-welcome-gold) 38%, transparent)" }}
             aria-hidden
           />
 
@@ -164,27 +204,49 @@ export function Welcome() {
 
           <div className="relative flex flex-col gap-8 sm:gap-9 md:gap-10">
             <header className="space-y-3 pt-2 text-center sm:space-y-3.5 sm:pt-3 md:space-y-4 md:pt-4">
-              <LayeredWelcomeTitle title={content.title} connector={content.connector} script={content.script} />
-              <OrnamentalDivider compact />
+              <LayeredWelcomeTitle
+                kicker={content.kicker}
+                title={content.title}
+                connector={content.connector}
+                script={content.script}
+              />
+              <EnchantedRose />
             </header>
 
-            <div
-              className={`font-goudy-italic mx-auto max-w-[36rem] space-y-3 text-center sm:space-y-3.5 md:space-y-4 ${sectionType.textRelaxed}`}
-              style={{ color: WELCOME_COLORS.ink }}
-            >
-              {content.paragraphs.map((paragraph, index) => (
-                <p key={index}>{fill(paragraph)}</p>
-              ))}
+            <div className="mx-auto max-w-[35rem] text-center">
+              {content.opening ? (
+                <p
+                  className={`${aboveTheBeyond.className} mb-2 px-2 leading-[1.3] sm:mb-3`}
+                  style={{ color: WELCOME_COLORS.rose, fontSize: "clamp(1.75rem, min(8vw, 10cqi), 2.75rem)" }}
+                >
+                  {content.opening}
+                </p>
+              ) : null}
+              <div
+                className="font-goudy-italic space-y-4 text-[0.9375rem] leading-[1.75] sm:space-y-5 sm:text-[1.0625rem] sm:leading-[1.8]"
+                style={{ color: WELCOME_COLORS.ink }}
+              >
+                {content.paragraphs.map((paragraph, index) => (
+                  <p key={index}>{fill(paragraph)}</p>
+                ))}
+              </div>
             </div>
 
-            <footer className="space-y-2 border-t pt-8 text-center sm:space-y-2.5 sm:pt-9 md:pt-10"
-              style={{
-                borderColor: WELCOME_COLORS.hairline,
-              }}
-            >
+            <footer className="space-y-3 pb-2 text-center sm:space-y-4">
+              <div className="flex items-center justify-center gap-2 pb-2" aria-hidden>
+                <span
+                  className="h-px w-16 sm:w-28"
+                  style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold))" }}
+                />
+                <span className="h-1.5 w-1.5 rotate-45" style={{ background: "var(--color-motif-accent)" }} />
+                <span
+                  className="h-px w-16 sm:w-28"
+                  style={{ background: "linear-gradient(to left, transparent, var(--color-welcome-gold))" }}
+                />
+              </div>
               <p
-                className={`${aboveTheBeyond.className} ${sectionType.script}`}
-                style={{ color: WELCOME_COLORS.wine }}
+                className={`${aboveTheBeyond.className} text-[1.35rem] leading-[1.3] sm:text-[1.75rem]`}
+                style={{ color: WELCOME_COLORS.midnight }}
               >
                 {content.signOff}
               </p>

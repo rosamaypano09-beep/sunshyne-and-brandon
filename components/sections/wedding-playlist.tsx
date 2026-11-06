@@ -7,7 +7,7 @@ import { useAudio } from "@/contexts/audio-context"
 import { Lora } from "next/font/google"
 import { cinzel } from "@/lib/fonts"
 import localFont from "next/font/local"
-import { Music2, Disc3 } from "lucide-react"
+import { Music2, Disc3, Play, Pause } from "lucide-react"
 import { motion, useReducedMotion, type Variants } from "motion/react"
 
 interface SpotifyPlaybackUpdate {
@@ -131,7 +131,7 @@ const NAVY = TEAL
 const BODY = "color-mix(in srgb, var(--color-welcome-text) 85%, var(--color-motif-deep))"
 const ACCENT = GOLD_INK
 const HAIRLINE = "color-mix(in srgb, var(--color-welcome-gold) 45%, transparent)"
-const BUTTON_GRADIENT = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const BUTTON_GRADIENT = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 const DISC_GRADIENT = "linear-gradient(180deg, var(--color-motif-deep) 0%, color-mix(in srgb, var(--color-motif-deep) 70%, var(--color-coastal-deep)) 100%)"
 
 const textLift =
@@ -226,6 +226,63 @@ function PlaylistTitle({ title, script }: { title: string; script: string }) {
         </>
       ) : null}
     </h2>
+  )
+}
+
+// No Spotify link: plays and pauses the site's own background song
+function ThemeSongPlayer({ label, reduceMotion }: { label: string; reduceMotion: boolean }) {
+  const { audioRef } = useAudio()
+  const [playing, setPlaying] = useState(false)
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    const sync = () => setPlaying(!audio.paused)
+    sync()
+    audio.addEventListener("play", sync)
+    audio.addEventListener("pause", sync)
+    return () => {
+      audio.removeEventListener("play", sync)
+      audio.removeEventListener("pause", sync)
+    }
+  }, [audioRef])
+
+  const toggle = () => {
+    const audio = audioRef.current
+    if (!audio) return
+    if (audio.paused) audio.play().catch(() => setPlaying(false))
+    else audio.pause()
+  }
+
+  return (
+    <div
+      className="flex w-full flex-col items-center justify-center gap-4 rounded-[14px] px-4 py-8 sm:rounded-2xl"
+      style={{
+        minHeight: PLAYER_HEIGHT,
+        background: "color-mix(in srgb, var(--color-motif-blush) 22%, var(--color-motif-soft))",
+        boxShadow: `0 0 0 1px ${HAIRLINE}`,
+      }}
+    >
+      <Disc3
+        className={`h-12 w-12 ${playing && !reduceMotion ? "animate-[spin_3s_linear_infinite]" : ""}`}
+        style={{ color: TEAL }}
+        aria-hidden
+      />
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={`${playing ? "Pause" : "Play"} ${label}`}
+        className={`${cinzel.className} inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-7 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.16em] transition-all duration-300 hover:scale-[1.02] hover:brightness-110 active:scale-[0.98]`}
+        style={{
+          background: BUTTON_GRADIENT,
+          borderColor: "color-mix(in srgb, var(--color-welcome-gold) 65%, transparent)",
+          color: "#fff",
+        }}
+      >
+        {playing ? <Pause className="h-4 w-4" aria-hidden /> : <Play className="h-4 w-4" aria-hidden />}
+        {playing ? "Pause Song" : "Play Song"}
+      </button>
+    </div>
   )
 }
 
@@ -417,6 +474,7 @@ export function WeddingPlaylist() {
                   className="my-5 hidden h-px w-24 md:block"
                   style={{ background: "linear-gradient(to right, var(--color-welcome-gold), transparent)" }}
                 />
+                {embedUrl ? (
                 <a
                   href={spotifyUrl}
                   target="_blank"
@@ -432,9 +490,11 @@ export function WeddingPlaylist() {
                   <Music2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   {content.buttonText}
                 </a>
+                ) : null}
               </div>
 
-              {/* Spotify player */}
+              {/* Spotify player, or a simple play button for the background song */}
+              {embedUrl ? (
               <div
                 className="relative w-full overflow-hidden rounded-[14px] p-1 sm:rounded-2xl sm:p-2"
                 style={{ background: IVORY, boxShadow: `0 0 0 1px ${HAIRLINE}, 0 18px 36px -24px color-mix(in srgb, var(--color-coastal-deep) 60%, transparent)` }}
@@ -480,8 +540,12 @@ export function WeddingPlaylist() {
                   </div>
                 )}
               </div>
+              ) : (
+                <ThemeSongPlayer label={playlistName} reduceMotion={!!reduceMotion} />
+              )}
 
               {/* Phone: compact full-width button under the player */}
+              {embedUrl ? (
               <a
                 href={spotifyUrl}
                 target="_blank"
@@ -496,6 +560,7 @@ export function WeddingPlaylist() {
                 <Music2 className="h-3.5 w-3.5" />
                 {content.buttonText}
               </a>
+              ) : null}
             </div>
           </motion.div>
         </div>

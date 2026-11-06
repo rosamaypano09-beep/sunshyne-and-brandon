@@ -356,10 +356,22 @@ export function Hero() {
             className="home-hero-title-glow pointer-events-none absolute left-1/2 top-[48%] h-[min(18rem,58vw)] w-[min(36rem,96%)] -translate-x-1/2 -translate-y-1/2 rounded-full"
           />
           <span className="sr-only">{fill(hero.srTitle)}</span>
-          {/* Nickname in large gold script — padded so the swashes never clip */}
-          <span aria-hidden className={`${aboveTheBeyond.className} home-hero-name relative block`}>
-            {fill(hero.titleMain)}
-          </span>
+          {/* Gold name lettering, or the names in large script — padded so the swashes never clip */}
+          {hero.nameImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={hero.nameImage} alt="" aria-hidden className="home-hero-name-image relative block" />
+          ) : (
+            <span aria-hidden className={`${aboveTheBeyond.className} home-hero-name relative block`}>
+              {/* Two lines, like the poster: "Sunshyne" over "& Brandon" */}
+              {fill(hero.titleMain)
+                .split(/\s(?=&)/)
+                .map((line) => (
+                  <span key={line} className="home-hero-name__line">
+                    {line}
+                  </span>
+                ))}
+            </span>
+          )}
           {hero.eyebrow && (
             <span aria-hidden className={`${cinzel.className} home-hero-fullname relative`}>
               {fill(hero.eyebrow)}
@@ -381,12 +393,17 @@ export function Hero() {
         )}
 
         <motion.p
-          className={`${theSeasons.className} home-hero-date text-[clamp(1.85rem,8.5vw,3.4rem)] font-normal leading-none tracking-[0.08em]`}
+          className={`${cinzel.className} home-hero-date text-[clamp(1.85rem,8.5vw,3.4rem)] font-normal leading-none tracking-[0.08em]`}
           {...fadeUp(0.3)}
         >
           {numericDate}
         </motion.p>
 
+        {hero.meta && (
+          <motion.p className={`${cinzel.className} home-hero-meta uppercase`} {...fadeUp(0.36)}>
+            {fill(hero.meta)}
+          </motion.p>
+        )}
       </div>
 
       <motion.div className="home-hero-countdown-bar relative z-10 mt-auto w-full" {...fadeUp(0.42)}>

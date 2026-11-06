@@ -10,6 +10,7 @@ import { useSiteConfig } from "@/hooks/use-site-config"
 import { siteConfig as defaultSiteConfig } from "@/content/site"
 import { PlainBubbles } from "@/components/loader/PlainBubbles"
 import { RisingMotes } from "@/components/rising-motes"
+import { RoseBloom } from "@/components/rose-bloom"
 import "@/components/loader/loading-screen.css"
 import "./love-story-red.css"
 
@@ -40,14 +41,18 @@ function formatStoryParagraph(paragraph: string, celebrant: string): string {
   return paragraph.split("{celebrant}").join(celebrant)
 }
 
-function OrnamentalDivider() {
+function OrnamentalDivider({ rose = false }: { rose?: boolean }) {
   return (
     <div className="flex items-center justify-center gap-1.5">
       <span
         className="h-px w-6 sm:w-10"
         style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold))" }}
       />
-      <span className="h-1 w-1 rotate-45 sm:h-1.5 sm:w-1.5" style={{ background: GOLD }} aria-hidden />
+      {rose ? (
+        <RoseBloom className="mx-1 h-5 w-auto sm:h-6" />
+      ) : (
+        <span className="h-1 w-1 rotate-45 sm:h-1.5 sm:w-1.5" style={{ background: GOLD }} aria-hidden />
+      )}
       <span
         className="h-px w-6 sm:w-10"
         style={{ background: "linear-gradient(to left, transparent, var(--color-welcome-gold))" }}
@@ -69,7 +74,7 @@ function LoveStoryTitle({
       style={
         {
           "--title-size": layeredSectionTitleSize.main,
-          "--script-size": layeredSectionTitleSize.script,
+          "--script-size": "clamp(1.35rem, min(6.6vw, 8cqi), 2.9rem)",
         } as React.CSSProperties
       }
     >
@@ -85,11 +90,13 @@ function LoveStoryTitle({
       </span>
       <span
         aria-hidden
-        className={`${aboveTheBeyond.className} mx-auto mt-2 block w-fit max-w-full px-1 leading-[0.88] sm:mt-2.5 sm:leading-[0.9] md:mt-3`}
+        className={`${aboveTheBeyond.className} mx-auto block w-fit max-w-full px-1 leading-[1.25]`}
         style={{
           fontSize: "var(--script-size)",
           color: GOLD,
           textShadow: onBgGlow,
+          // The script's tall letters rise above their line; this keeps them clear of the title
+          marginTop: "0.4em",
         }}
       >
         {subtitle}
@@ -152,7 +159,7 @@ export function LoveStory() {
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.75, ease: revealEase }}
         >
-          <OrnamentalDivider />
+          <OrnamentalDivider rose />
           <LoveStoryTitle title={loveStory.title} subtitle={loveStory.subtitle} />
         </motion.div>
       </header>
@@ -164,6 +171,7 @@ export function LoveStory() {
           theme={chapter.theme}
           layout={chapter.layout}
           imageSrc={chapter.image}
+          imagePosition={chapter.imagePosition}
           text={chapterTextFromParagraphs(chapter.paragraphs, celebrant)}
           plain={isPlain}
           chapterIndex={index}

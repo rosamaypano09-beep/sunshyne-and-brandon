@@ -7,7 +7,7 @@ import localFont from "next/font/local"
 export const anastasiaScript = localFont({
   src: "../Font/AnastasiaScript.ttf",
   display: "swap",
-  preload: true,
+  preload: false, // nothing on the first screen uses this copy, so it should not compete for bandwidth
   variable: "--font-anastasia-script",
   weight: "400",
   style: "normal",

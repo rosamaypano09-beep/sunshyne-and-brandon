@@ -1,6 +1,5 @@
 "use client"
 
-import { celebrantName } from "@/lib/celebrant"
 import React from "react"
 import { useState, useEffect, useMemo, useRef } from "react"
 import localFont from "next/font/local"
@@ -284,7 +283,7 @@ const ct = {
   bodyLg: sectionType.subheader,
 } as const
 
-// Template (wedding) categories. A debut's own categories come first from
+// Standard wedding categories. Any custom ones come first from
 // content/site.ts → entourage.categoryOrder (see Entourage below).
 const TEMPLATE_CATEGORY_ORDER = [
   "OFFICIATING MINISTER",
@@ -466,7 +465,6 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
   const sponsorsPath = sponsorsUrl(sponsorsList)
   const siteConfig = useSiteConfig()
   const content = siteConfig.entourage
-  const celebrant = siteConfig.celebrant?.fullName || celebrantName(siteConfig)
   const ROLE_CATEGORY_ORDER = useMemo(
     () => [...(content.categoryOrder ?? []), ...TEMPLATE_CATEGORY_ORDER.filter((c) => !(content.categoryOrder ?? []).includes(c))],
     [content.categoryOrder],
@@ -842,17 +840,18 @@ export function Entourage({ sponsorsList }: { sponsorsList?: SponsorsList } = {}
               <CouplePromiseMark kicker={content.coupleKicker} line={content.coupleLine} />
               <div className="mb-2 sm:mb-2.5 md:mb-3">
                 <SectionTitle>{content.coupleHeading}</SectionTitle>
-                <div className="flex justify-center">
-                  <NameItem
-                    member={{
-                      name: celebrant,
-                      roleCategory: "The Couple",
-                      roleTitle: content.celebrantRole,
-                      email: "",
-                    }}
-                    align="center"
-                    featured
-                  />
+                <div className="flex flex-wrap justify-center gap-x-10 gap-y-2 sm:gap-x-16">
+                  {[
+                    { name: siteConfig.couple.bride, roleTitle: content.brideRole },
+                    { name: siteConfig.couple.groom, roleTitle: content.groomRole },
+                  ].map((person) => (
+                    <NameItem
+                      key={person.roleTitle}
+                      member={{ ...person, roleCategory: "The Couple", email: "" }}
+                      align="center"
+                      featured
+                    />
+                  ))}
                 </div>
               </div>
               {ROLE_CATEGORY_ORDER.map((category, categoryIndex) => {

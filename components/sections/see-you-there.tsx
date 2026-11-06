@@ -29,9 +29,9 @@ const PHOTO_HOLD_MS = 6000
 
 const titleSize = "clamp(2.85rem, 13.5vw, 6.75rem)"
 const photoTitleShadow =
-  "0 1px 0 rgb(255 250 244 / 28%), 0 2px 18px rgb(30 4 10 / 60%), 0 12px 36px rgb(30 4 10 / 45%)"
+  "0 1px 0 rgb(255 250 244 / 28%), 0 2px 18px rgb(14 21 38 / 60%), 0 12px 36px rgb(14 21 38 / 45%)"
 // Small lines over the photo: a tight, deep shadow so they read on any part of the image
-const softShadow = "0 1px 2px rgb(20 2 6 / 85%), 0 2px 8px rgb(20 2 6 / 70%), 0 6px 24px rgb(20 2 6 / 55%)"
+const softShadow = "0 1px 2px rgb(10 15 29 / 85%), 0 2px 8px rgb(10 15 29 / 70%), 0 6px 24px rgb(10 15 29 / 55%)"
 const SCRIPT_GOLD = "var(--color-welcome-gold)"
 
 const CORNER_DECO_CLASS =
@@ -266,12 +266,12 @@ function PhotoSeeYouThere() {
           />
         )}
 
-        {/* Phones: the text sits low, so the bottom half deepens to wine */}
+        {/* Phones: the text sits low, so the bottom half deepens to midnight blue */}
         <div
           className="pointer-events-none absolute inset-0 md:hidden"
           style={{
             background:
-              "linear-gradient(180deg, rgb(30 4 10 / 35%) 0%, rgb(30 4 10 / 6%) 26%, rgb(30 4 10 / 22%) 46%, rgb(40 5 14 / 76%) 66%, rgb(26 3 9 / 93%) 100%)",
+              "linear-gradient(180deg, rgb(14 21 38 / 35%) 0%, rgb(14 21 38 / 6%) 26%, rgb(14 21 38 / 22%) 46%, rgb(17 26 47 / 76%) 66%, rgb(12 18 34 / 93%) 100%)",
           }}
           aria-hidden
         />
@@ -280,7 +280,7 @@ function PhotoSeeYouThere() {
           className="pointer-events-none absolute inset-0 hidden md:block"
           style={{
             background:
-              "radial-gradient(48% 42% at 50% 50%, rgb(30 4 10 / 66%) 0%, rgb(30 4 10 / 38%) 60%, transparent 100%), linear-gradient(180deg, rgb(30 4 10 / 38%) 0%, rgb(30 4 10 / 12%) 35%, rgb(30 4 10 / 12%) 65%, rgb(30 4 10 / 58%) 100%)",
+              "radial-gradient(48% 42% at 50% 50%, rgb(14 21 38 / 66%) 0%, rgb(14 21 38 / 38%) 60%, transparent 100%), linear-gradient(180deg, rgb(14 21 38 / 38%) 0%, rgb(14 21 38 / 12%) 35%, rgb(14 21 38 / 12%) 65%, rgb(14 21 38 / 58%) 100%)",
           }}
           aria-hidden
         />

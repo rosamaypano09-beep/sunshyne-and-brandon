@@ -49,7 +49,7 @@ const GOLD_INK = "color-mix(in srgb, var(--color-welcome-gold) 78%, var(--color-
 const HAIRLINE = "color-mix(in srgb, var(--color-welcome-gold) 45%, transparent)"
 const PALE = "color-mix(in srgb, var(--color-motif-blush) 30%, var(--color-motif-soft))"
 const TEAL_SOFT = "color-mix(in srgb, var(--color-motif-deep) 65%, transparent)"
-const BUTTON_GRADIENT = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const BUTTON_GRADIENT = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 const BUTTON_SHADOW = "0 12px 24px -12px color-mix(in srgb, var(--color-coastal-deep) 65%, transparent)"
 const BUTTON_EDGE = "color-mix(in srgb, var(--color-welcome-gold) 65%, transparent)"
 
@@ -285,7 +285,7 @@ export function SnapShare() {
           onClick={() =>
             downloadCanvas(
               "snapshare-qr",
-              `${fileSlug}-debut-qr.png`,
+              `${fileSlug}-wedding-qr.png`,
             )
           }
         >

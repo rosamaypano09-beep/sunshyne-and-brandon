@@ -62,7 +62,7 @@ function MarqueeRow({
                     priority={eager}
                     draggable={false}
                     decoding="async"
-                    fetchPriority={copy === 0 && index < 2 ? 'high' : 'low'}
+                    fetchPriority={eager ? 'high' : 'low'}
                     className="object-cover"
                   />
                 </div>
@@ -106,7 +106,8 @@ export function PhotoMarquee({
   const [top, bottom] = compact
     ? [selected, [...selected].reverse()]
     : splitMarqueeRows(selected);
-  const eagerCount = compact ? selected.length : 3;
+  // Only the first photo of each row is on screen at load; the rest lazy-load as they drift in
+  const eagerCount = 1;
 
   return (
     <div className={`loading-screen__marquee loading-screen__marquee--${variant}`}>

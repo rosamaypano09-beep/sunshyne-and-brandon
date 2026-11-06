@@ -70,13 +70,13 @@
 .home-hero--photos .home-hero-title-main {
   text-shadow:
     0 2px 3px rgba(0, 0, 0, 0.55),
-    0 4px 22px rgba(20, 0, 5, 0.65),
-    0 12px 40px rgba(20, 0, 5, 0.45);
+    0 4px 22px rgba(7, 14, 29, 0.65),
+    0 12px 40px rgba(7, 14, 29, 0.45);
 }
 .home-hero--photos .home-hero-title-script {
   text-shadow:
     0 2px 2px rgba(0, 0, 0, 0.6),
-    0 4px 18px rgba(20, 0, 5, 0.7),
+    0 4px 18px rgba(7, 14, 29, 0.7),
     0 0 24px color-mix(in srgb, var(--color-welcome-gold) 30%, transparent);
 }
 .home-hero--photos .home-hero-eyebrow,
@@ -88,13 +88,13 @@
   color: #fff;
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.75),
-    0 2px 12px rgba(20, 0, 5, 0.7);
+    0 2px 12px rgba(7, 14, 29, 0.7);
 }
 
 /* ==========================================================================
    Hero — name block in the same language as the loading screen + envelope:
-   small invitation line, "Bea" in large gold script, full name in tracked
-   caps between hairlines, a gold rule, "turns eighteen", then the date.
+   small invitation line, the couple's gold lettering, optional caps line
+   between hairlines, a gold rule, "are getting married", then the date.
    ========================================================================== */
 
 /* Ghost marquee (shared GhostMarquee) — above the photo scrim, under the text */
@@ -120,29 +120,72 @@
   text-wrap: balance;
 }
 
-/* "Bea": solid gold (no background-clip, so the tall swash is never cut) */
+/* Script names (Above the Beyond), stacked like the poster: "Sunshyne" over "& Brandon".
+   Sized by width and height so both lines fit any phone: "& Brandon" is about 5.75em wide plus
+   its 0.14em offset, so 14vw leaves a gutter on each side. The gold only paints inside each
+   line's box, so anything past it is cut off: measured, the letters rise 1.53em above the
+   baseline ("B") and drop 0.57em below it ("y"), which is what the padding has to cover.
+   The negative margins pull the lines back together. Flex centering keeps a line centered even when that padding makes
+   its box wider than the column (auto margins would push it off to the right). */
+.home-hero .home-hero-name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .home-hero-name {
-  margin: clamp(0.1rem, 1vw, 0.5rem) auto 0;
-  padding: 0.18em 0.3em 0.06em;
-  font-size: clamp(5.4rem, 31vw, 11.5rem);
+  margin: 0 auto;
+  font-size: min(clamp(2.75rem, 14vw, 7.75rem), 12dvh);
   font-weight: 400;
-  line-height: 0.95;
-  white-space: nowrap;
+  line-height: 1;
   color: var(--color-welcome-gold);
 }
+.home-hero-name__line {
+  display: block;
+  width: fit-content;
+  margin: -0.81em 0 -0.51em;
+  padding: 0.85em 0.34em 0.55em;
+  white-space: nowrap;
+}
+/* Offset lines, so the capitals interlock instead of sitting in a plain centered stack */
+.home-hero-name__line:first-child {
+  transform: translateX(-0.14em);
+}
+.home-hero-name__line:last-child:not(:first-child) {
+  margin-top: -0.63em; /* flex margins add up with the line above */
+  transform: translateX(0.14em);
+}
 .home-hero--photos .home-hero-name {
-  color: color-mix(in srgb, var(--color-welcome-gold) 88%, #fff6dc);
-  text-shadow:
-    0 1px 0 rgba(255, 246, 220, 0.45),
-    0 3px 6px rgba(20, 0, 5, 0.55),
-    0 10px 34px rgba(20, 0, 5, 0.55),
-    0 0 40px color-mix(in srgb, var(--color-welcome-gold) 35%, transparent);
+  filter:
+    drop-shadow(0 2px 3px rgba(5, 10, 26, 0.75))
+    drop-shadow(0 8px 26px rgba(5, 10, 26, 0.6));
+}
+.home-hero--photos .home-hero-name__line {
+  background: linear-gradient(
+    180deg,
+    #fff0c4 30%,
+    color-mix(in srgb, var(--color-welcome-gold) 72%, #fff6dc) 50%,
+    var(--color-welcome-gold) 68%,
+    color-mix(in srgb, var(--color-welcome-gold) 78%, #7a4f12) 82%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 .home-hero--plain .home-hero-name {
   color: var(--color-on-pattern);
   text-shadow:
     0 1px 0 var(--color-on-pattern-glow),
     0 3px 16px var(--color-on-pattern-glow);
+}
+
+/* Couple's gold name lettering (image) */
+.home-hero-name-image {
+  width: min(86vw, 40dvh, 560px);
+  height: auto;
+  margin: clamp(0.4rem, 1.4vw, 0.8rem) auto 0;
+  filter:
+    drop-shadow(0 2px 3px rgba(5, 10, 26, 0.75))
+    drop-shadow(0 8px 26px rgba(5, 10, 26, 0.6));
 }
 
 /* Full name between two short gold hairlines */
@@ -162,7 +205,7 @@
   color: #fff;
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.75),
-    0 2px 12px rgba(20, 0, 5, 0.7);
+    0 2px 12px rgba(7, 14, 29, 0.7);
 }
 .home-hero-fullname::before,
 .home-hero-fullname::after {
@@ -205,11 +248,11 @@
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-welcome-gold) 60%, transparent));
 }
 
-/* "turns eighteen" — gold script just above the date */
+/* "are getting married" — gold script just above the date */
 .home-hero-turns {
   margin: 0 auto;
   padding: 0.12em 0.3em 0.1em;
-  font-size: clamp(1.9rem, 8.6vw, 3.4rem);
+  font-size: clamp(1.2rem, 6.6vw, 3rem);
   line-height: 1;
   white-space: nowrap;
 }
@@ -218,12 +261,8 @@
   margin-top: clamp(0.35rem, 1.5vw, 0.7rem);
 }
 
-.home-hero-meta-dot {
-  display: inline-block;
-  margin: 0 0.5em;
-  font-size: 0.6em;
-  vertical-align: 0.2em;
-  color: var(--color-welcome-gold);
+.home-hero-meta {
+  margin-top: clamp(0.6rem, 2.4vw, 0.9rem);
 }
 
 /* ---- Readability + spacing pass ----
@@ -231,14 +270,14 @@
    the invitation line lifted clear of the tall "B", and bolder small caps. */
 .home-hero--photos .home-hero-photo-scrim {
   background:
-    radial-gradient(85% 52% at 50% 46%, rgba(26, 0, 7, 0.78) 0%, rgba(40, 2, 12, 0.6) 45%, rgba(40, 2, 12, 0.28) 75%, transparent 100%),
+    radial-gradient(85% 52% at 50% 46%, rgba(9, 16, 34, 0.78) 0%, rgba(14, 24, 47, 0.6) 45%, rgba(14, 24, 47, 0.28) 75%, transparent 100%),
     linear-gradient(
       180deg,
-      rgba(26, 0, 7, 0.82) 0%,
-      rgba(60, 4, 16, 0.5) 22%,
-      rgba(60, 4, 16, 0.42) 50%,
-      rgba(60, 4, 16, 0.55) 74%,
-      rgba(26, 0, 7, 0.9) 100%
+      rgba(9, 16, 34, 0.82) 0%,
+      rgba(20, 34, 65, 0.5) 22%,
+      rgba(20, 34, 65, 0.42) 50%,
+      rgba(20, 34, 65, 0.55) 74%,
+      rgba(9, 16, 34, 0.9) 100%
     );
 }
 
@@ -255,7 +294,7 @@
   color: color-mix(in srgb, var(--color-welcome-gold) 55%, #fff6dc);
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.9),
-    0 2px 14px rgba(20, 0, 5, 0.85);
+    0 2px 14px rgba(7, 14, 29, 0.85);
 }
 /* The block sits a little higher on the screen */
 .home-hero-name {
@@ -267,19 +306,19 @@
   font-size: clamp(0.8rem, 3.6vw, 1.2rem);
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.9),
-    0 2px 14px rgba(20, 0, 5, 0.85);
+    0 2px 14px rgba(7, 14, 29, 0.85);
 }
 
-/* "turns eighteen" + date: stronger shadow over the photo */
+/* "are getting married" + date: stronger shadow over the photo */
 .home-hero--photos .home-hero-turns {
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.8),
-    0 3px 16px rgba(20, 0, 5, 0.85);
+    0 3px 16px rgba(7, 14, 29, 0.85);
 }
 .home-hero--photos .home-hero-date {
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.85),
-    0 3px 18px rgba(20, 0, 5, 0.85);
+    0 3px 18px rgba(7, 14, 29, 0.85);
 }
 
 /* Venue · time: bigger, bolder, easier to read */
@@ -291,15 +330,31 @@
 .home-hero--photos .home-hero-meta {
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.9),
-    0 2px 12px rgba(20, 0, 5, 0.85);
+    0 2px 12px rgba(7, 14, 29, 0.85);
 }
 
 /* ---- Mobile spacing pass ----
-   Invitation line lifted further above "Bea", and breathing room around the full name. */
+   Invitation line lifted further above the names, and breathing room around the full name. */
 .home-hero .home-hero-kicker {
-  margin-bottom: clamp(2.4rem, 11vw, 3.4rem);
+  /* Tracks the name size: the tall letters rise about 0.56em above the top of their line */
+  margin-bottom: min(clamp(1.8rem, 11.5vw, 6.2rem), 10dvh);
 }
 .home-hero .home-hero-fullname {
   margin-top: clamp(0.7rem, 3vw, 1.1rem);
   margin-bottom: clamp(0.3rem, 1.5vw, 0.6rem);
+}
+
+/* Clear of the home indicator on notched phones */
+.home-hero-countdown-bar {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Phones: half the gold dust and no per-mote blur, so scrolling stays smooth on slower devices */
+@media (max-width: 640px) {
+  .home-hero-motes--back .home-hero-mote:nth-child(even) {
+    display: none;
+  }
+  .home-hero-motes--front .home-hero-mote {
+    filter: none;
+  }
 }

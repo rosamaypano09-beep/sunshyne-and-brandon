@@ -54,7 +54,7 @@ const aboveTheBeyond = localFont({
 // buttons. Circle colors + blur: components/sections/love-story-red.css (.red-velvet-root); gold dust rises behind the content
 // TEAL keeps its template name but is now the wine ink used on the ivory cards.
 const TEAL = "var(--color-motif-deep)"
-const BUTTON = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const BUTTON = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 const BUTTON_HOVER =
   "linear-gradient(180deg, color-mix(in srgb, var(--color-motif-accent) 88%, black) 0%, color-mix(in srgb, var(--color-motif-deep) 85%, black) 100%)"
 const BUTTON_EDGE = "color-mix(in srgb, var(--color-welcome-gold) 60%, transparent)"

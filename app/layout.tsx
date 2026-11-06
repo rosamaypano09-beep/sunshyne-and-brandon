@@ -6,7 +6,6 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { siteConfig, canonicalSiteUrl } from "@/content/site"
 import { ClientLayout } from "@/components/client-layout"
-import { LOADING_BG_PHOTOS } from "@/lib/loading-bg-photos"
 import { anastasiaScript, cinzel } from "@/lib/fonts"
 
 const canonicalUrl = canonicalSiteUrl
@@ -16,13 +15,13 @@ const OG_IMAGE_SIZE = siteConfig.linkPreviewImageSize
 
 const celebrant = siteConfig.celebrant.nickname
 const hashtag = siteConfig.snapShare.hashtag[0] ?? `#${celebrant}Turns18`
-const eventTitle = `${celebrant}'s Debut - ${siteConfig.event.theme}`
-const eventDescription = `Celebrate ${celebrant}'s 18th birthday debut on ${siteConfig.wedding.date} at ${siteConfig.ceremony.location}. ${siteConfig.event.theme} — RSVP, see the program, dress code, and everything you need for the night.`
+const eventTitle = `${celebrant} - ${siteConfig.event.theme}`
+const eventDescription = `Celebrate the wedding of ${celebrant} on ${siteConfig.wedding.date} at ${siteConfig.ceremony.location}. ${siteConfig.event.theme} — RSVP, see the program, dress code, and everything you need for the night.`
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Event",
-  name: `${celebrant}'s Debut`,
+  name: `${celebrant} Wedding`,
   startDate: "2026-11-22T17:00:00+08:00", // ⚠ check — keep in step with EVENT_DATE + guest arrival in content/site.ts
   eventStatus: "https://schema.org/EventScheduled",
   eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
@@ -64,12 +63,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(canonicalUrl),
   title: {
     default: eventTitle,
-    template: `%s | ${celebrant}'s Debut`,
+    template: `%s | ${celebrant} Wedding`,
   },
   description: eventDescription,
   keywords:
-    `${celebrant} debut, ${celebrant} 18th birthday, debut invitation, ${siteConfig.ceremony.location}, 18 roses, RSVP, ${hashtag}`,
-  applicationName: `${celebrant}'s Debut`,
+    `${celebrant} wedding, wedding invitation, ${siteConfig.ceremony.location} wedding, RSVP, ${hashtag}`,
+  applicationName: `${celebrant} Wedding`,
   authors: [{ name: celebrant }],
   creator: celebrant,
   publisher: celebrant,
@@ -96,10 +95,10 @@ export const metadata: Metadata = {
   },
   manifest: "/favicon_io/site.webmanifest",
   openGraph: {
-    title: `${celebrant}'s Debut | ${siteConfig.wedding.date}`,
+    title: `${celebrant} Wedding | ${siteConfig.wedding.date}`,
     description: eventDescription,
     url: `${canonicalUrl}/`,
-    siteName: `${celebrant}'s Debut`,
+    siteName: `${celebrant} Wedding`,
     locale: "en_PH",
     type: "website",
     images: [
@@ -109,14 +108,14 @@ export const metadata: Metadata = {
         width: OG_IMAGE_SIZE.width,
         height: OG_IMAGE_SIZE.height,
         type: OG_IMAGE_SIZE.type,
-        alt: `${celebrant}'s Debut Invitation - ${siteConfig.wedding.date}`,
+        alt: `${celebrant} Wedding Invitation - ${siteConfig.wedding.date}`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${celebrant}'s Debut Invitation`,
-    description: `You're invited to ${celebrant}'s debut on ${siteConfig.wedding.date}. RSVP and get all the details for the night! ${hashtag}`,
+    title: `${celebrant} Wedding Invitation`,
+    description: `You're invited to the wedding of ${celebrant} on ${siteConfig.wedding.date}. RSVP and get all the details for the night! ${hashtag}`,
     images: [OG_IMAGE_URL],
   },
   robots: {
@@ -131,7 +130,7 @@ export const metadata: Metadata = {
     },
   },
   appleWebApp: {
-    title: `${celebrant}'s Debut`,
+    title: `${celebrant} Wedding`,
     statusBarStyle: "default",
     capable: true,
   },
@@ -142,7 +141,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   colorScheme: "light",
-  themeColor: "#0E0B0C", // --color-coastal-deep (meta tags need a literal color)
+  themeColor: "#0A1228", // --color-coastal-deep (meta tags need a literal color)
 }
 
 export default function RootLayout({
@@ -155,32 +154,15 @@ export default function RootLayout({
       <head>
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="color-scheme" content="light" />
-        <meta name="theme-color" content="#0E0B0C" />
+        <meta name="theme-color" content="#0A1228" />
         <meta name="format-detection" content="telephone=yes,email=no,address=no" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Lavishly+Yours&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Style+Script&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet" />
+        {/* One render-blocking request for every Google font the CSS names by family */}
         <link
-          rel="preload"
-          href="/fonts/AnastasiaScript.ttf"
-          as="font"
-          type="font/ttf"
-          crossOrigin="anonymous"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Playfair+Display:wght@400;500;600&family=Style+Script&display=swap"
+          rel="stylesheet"
         />
-        {LOADING_BG_PHOTOS.slice(0, 3).map((href, index) => (
-          <link
-            key={href}
-            rel="preload"
-            as="image"
-            href={href}
-            type="image/webp"
-            {...(index === 0 ? { fetchPriority: "high" as const } : {})}
-          />
-        ))}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body

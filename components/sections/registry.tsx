@@ -39,7 +39,7 @@ const textLift =
   "0 1px 2px color-mix(in srgb, var(--color-coastal-deep) 60%, transparent), 0 2px 14px color-mix(in srgb, var(--color-coastal-deep) 45%, transparent)"
 const onBg = { color: "#fff", textShadow: textLift } as const
 const onBgGold = { color: "var(--color-welcome-gold)", textShadow: textLift } as const
-const SEAL_GRADIENT = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const SEAL_GRADIENT = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 
 const ease = [0.22, 1, 0.36, 1] as const
 
@@ -118,7 +118,7 @@ export function Registry() {
   }
   const dividerLineStyle = { background: "linear-gradient(to right, transparent, var(--color-welcome-gold), transparent)" }
 
-  // "Dear family and friends — eighteen years…" → salutation line + letter body
+  // "Dear family and friends — …" → salutation line + letter body
   const [firstParagraph = "", ...restParagraphs] = content.paragraphs
   const salutationMatch = firstParagraph.match(/^(.{1,48}?)\s+[—–]\s+(.+)$/s)
   const salutation = salutationMatch ? `${salutationMatch[1].replace(/[,:]$/, "")},` : null

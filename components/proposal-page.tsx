@@ -97,7 +97,7 @@ const dividerLineStyle = {
 
 const primaryBtnStyle: CSSProperties = {
   background:
-    "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)",
+    "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)",
   borderColor: "color-mix(in srgb, var(--color-welcome-gold) 65%, transparent)",
   color: "#fff",
   boxShadow: "0 12px 24px -12px color-mix(in srgb, var(--color-welcome-navy) 70%, transparent)",
@@ -325,7 +325,7 @@ function ProposalQuestion({
         </p>
       ) : null}
 
-      {/* Will you be one of my 18 Roses? */}
+      {/* Will you be our Best Man? */}
       <h2
         className={`${theSeasons.className} mt-4 text-[clamp(1.25rem,5.8vw,1.85rem)] leading-snug tracking-[0.04em] [overflow-wrap:anywhere]`}
         style={{ ...goldGradientText, textShadow: "none" }}
@@ -371,7 +371,7 @@ function FlowHeader({
     <div
       className="flex h-16 w-16 items-center justify-center rounded-full"
       style={{
-        background: "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)",
+        background: "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)",
         boxShadow:
           "0 0 0 3px color-mix(in srgb, var(--color-coastal-deep) 40%, transparent), 0 0 0 4px var(--color-welcome-gold), 0 0 28px color-mix(in srgb, var(--color-welcome-gold) 35%, transparent)",
       }}
@@ -572,7 +572,7 @@ function ProposalPageInner({ role }: ProposalPageProps) {
       {/* Crimson Silk folds drifting over the wine background */}
       <div className="pointer-events-none fixed inset-0 z-0 opacity-[0.28]" aria-hidden>
         <Suspense fallback={<div className="h-full w-full" style={{ background: PAGE_BG }} />}>
-          <Silk speed={6} scale={1} color="#A3172A" noiseIntensity={0} rotation={0.25} />
+          <Silk speed={6} scale={1} color="#3a59a0" noiseIntensity={0} rotation={0.25} />
         </Suspense>
       </div>
 

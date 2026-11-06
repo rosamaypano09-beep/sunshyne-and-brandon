@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Loading screen — debut poster
+   Loading screen — wedding poster
    Blurred photo marquee under a red-velvet tint, gold Didone titles, cut-out
    portrait in the center, details row + dress-code pill at the bottom.
    Velvet curtains part on load; everything else enters on CSS delays
@@ -7,15 +7,15 @@
    ========================================================================== */
 
 .gala-loader {
-  --gala-velvet: #6e0a17;
-  --gala-velvet-deep: #2b0207;
+  --gala-velvet: #243b6f;
+  --gala-velvet-deep: #0f1932;
   --gala-ink: #f8f0e3;
   --gala-ink-soft: color-mix(in srgb, #f8f0e3 76%, transparent);
   --gala-gold: #d9b56a;
   --gala-gold-soft: #f3dc9f;
-  --gala-red: #ff3b4a;
+  --gala-red: #6a93f5;
   --gala-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --gala-shadow: drop-shadow(0 2px 1.5px rgba(40, 0, 6, 0.6)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
+  --gala-shadow: drop-shadow(0 2px 1.5px rgba(12, 23, 47, 0.6)) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45));
 
   background: var(--gala-velvet-deep);
   color: var(--gala-ink);
@@ -49,7 +49,7 @@
   inset: 0;
   z-index: -2;
 }
-/* Multiply turns the photos burgundy; the gradient on top adds depth + the center glow */
+/* Multiply turns the photos midnight blue; the gradient on top adds depth + the center glow */
 .gala-bg::before,
 .gala-bg::after {
   content: '';
@@ -57,14 +57,14 @@
   inset: 0;
 }
 .gala-bg::before {
-  background: #c4283c;
+  background: #3a5aa8;
   mix-blend-mode: multiply;
   opacity: 0.62;
 }
 .gala-bg::after {
   background:
-    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(170, 26, 46, 0.2) 0%, transparent 70%),
-    radial-gradient(ellipse 120% 90% at 50% 40%, rgba(90, 6, 18, 0.15) 0%, rgba(60, 3, 11, 0.4) 60%, rgba(30, 1, 6, 0.75) 100%);
+    radial-gradient(ellipse 70% 50% at 50% 40%, rgba(62, 93, 167, 0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 120% 90% at 50% 40%, rgba(29, 48, 93, 0.15) 0%, rgba(19, 33, 65, 0.4) 60%, rgba(11, 19, 38, 0.75) 100%);
 }
 
 /* Soft vertical folds: shadow + sheen, gently swaying */
@@ -77,7 +77,7 @@
     96deg,
     rgba(0, 0, 0, 0.26) 0px,
     rgba(0, 0, 0, 0) 40px,
-    rgba(255, 120, 130, 0.06) 66px,
+    rgba(149, 178, 245, 0.06) 66px,
     rgba(0, 0, 0, 0) 94px,
     rgba(0, 0, 0, 0.2) 130px
   );
@@ -125,7 +125,7 @@
   width: min(130vw, 960px);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(255, 175, 150, 0.2) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(170, 193, 245, 0.2) 0%, transparent 60%);
   opacity: 0;
   animation: gala-fade-to 2.4s ease 1.1s forwards;
 }
@@ -135,8 +135,8 @@
   z-index: 1;
   inset: 0;
   background:
-    linear-gradient(to bottom, rgba(20, 0, 4, 0.55) 0%, transparent 22%, transparent 60%, rgba(20, 0, 4, 0.85) 100%),
-    radial-gradient(ellipse at center, transparent 55%, rgba(10, 0, 2, 0.6) 100%);
+    linear-gradient(to bottom, rgba(7, 14, 29, 0.55) 0%, transparent 22%, transparent 60%, rgba(7, 14, 29, 0.85) 100%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(5, 9, 19, 0.6) 100%);
 }
 
 /* ---------- Ghost lettering ----------
@@ -217,13 +217,13 @@
     linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, transparent 16%, transparent 78%, rgba(0, 0, 0, 0.5) 100%),
     linear-gradient(
       90deg,
-      #2a0207 0%,
-      #650916 16%,
-      #a01a30 38%,
-      #cf3a52 49%,
-      #a01a30 60%,
-      #650916 84%,
-      #2a0207 100%
+      #0e1931 0%,
+      #223667 16%,
+      #3c599d 38%,
+      #5e7ec9 49%,
+      #3c599d 60%,
+      #223667 84%,
+      #0e1931 100%
     );
   box-shadow: -6px 0 14px rgba(0, 0, 0, 0.35);
   transform-origin: 0 0;
@@ -295,6 +295,7 @@
 .gala {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* nowrap lines can't stretch the poster past the screen */
   grid-template-rows: auto minmax(0, 1fr) auto;
   width: min(100%, 640px);
   height: 100%;
@@ -314,14 +315,13 @@
 }
 
 .gala__eyebrow,
-.gala__kicker,
-.gala__tagline p {
+.gala__kicker {
   font-family: var(--font-cinzel), serif;
   text-transform: uppercase;
   color: var(--gala-ink);
 }
 
-/* Two balanced lines on phones ("You are cordially invited / to the debut of") */
+/* Two balanced lines on phones ("You are cordially invited / to the wedding of") */
 .gala__eyebrow {
   max-width: 21em;
   margin: clamp(0.35rem, 1.2dvh, 0.9rem) 0 clamp(0.1rem, 0.4dvh, 0.3rem);
@@ -385,34 +385,54 @@
   filter: var(--gala-shadow);
 }
 
-/* Nickname: big gold script, written on left → right. The padding clears the tall
-   "B" swash above and the loops below so neither touches the lines around it. */
+/* The names: gold script on two lines. The padding clears the tall swashes above and
+   the loops below so neither touches the lines around it. */
 .gala__name-wrap {
   position: relative;
   z-index: 1;
   display: block;
-  padding: 0.24em 0 0.04em;
-  font-size: clamp(3.6rem, min(22vw, 12.5dvh), 8.5rem);
+  padding: 0.3em 0 0.12em;
+  font-size: clamp(2.5rem, min(15vw, 7.2dvh), 5rem);
   line-height: 0.9;
   white-space: nowrap;
 }
+/* Doubled class: .gala-script (later in this file) sets inline-block, which would put both
+   lines side by side on one nowrap row, wider than a phone */
+.gala__name.gala-script {
+  display: block;
+}
+.gala__name + .gala__name {
+  margin-top: -0.92em; /* tuck the second line into the first one's loops */
+}
 
-/* Full name: engraved caps between two short gold hairlines */
+/* One quiet line under the names */
+.gala__promise {
+  margin: clamp(0.15rem, 0.6dvh, 0.4rem) 0 0;
+  font-family: var(--gala-font-body), serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(0.95rem, min(4.3vw, 2.4dvh), 1.35rem);
+  letter-spacing: 0.03em;
+  line-height: 1.25;
+  color: var(--gala-gold-soft);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Date and place: engraved caps between two short gold hairlines */
 .gala__fullname {
-  --gala-track: 0.3em;
+  --gala-track: 0.16em;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75em;
-  /* Sits under "18th Birthday" — clear of the script's loops */
   margin: clamp(0.35rem, 1.1dvh, 0.7rem) 0 0;
   font-family: var(--font-cinzel), serif;
-  font-size: clamp(0.7rem, min(3.4vw, 2dvh), 1.2rem);
+  font-size: clamp(0.72rem, min(3.3vw, 2dvh), 1.1rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: var(--gala-track);
   line-height: 1.3;
-  white-space: nowrap;
+  white-space: pre;
 }
 .gala__fullname::before,
 .gala__fullname::after {
@@ -451,21 +471,25 @@
 .gala__photo {
   position: absolute;
   inset: clamp(-1.5rem, -2.5dvh, -0.5rem) -4% clamp(-7.5rem, -12dvh, -3.5rem);
-  /* Let the bottom of the portrait melt into the velvet under "18th Birthday" */
+  /* Let the bottom of the portrait melt into the velvet under the footer lines */
   -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 97%);
   mask-image: linear-gradient(to bottom, #000 70%, transparent 97%);
 }
 .gala__photo-img {
   object-fit: contain;
   object-position: 50% 100%;
-  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 40px rgba(255, 140, 120, 0.14));
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 40px rgba(217, 181, 106, 0.22));
 }
 
-/* Phones: a bigger portrait set higher — it fills the stage width, anchored at her head,
-   and the lower skirt fades into the velvet behind "18th Birthday" */
+/* Phones: portrait set high and anchored at their heads, with the gown fading out behind the
+   footer. The file's upper bodies sit right of its centre, so the box runs further off the left
+   edge to bring the couple to the middle of the screen with his sleeve fully in frame. */
 @media (max-width: 559px) {
+  .gala__name-wrap {
+    font-size: clamp(2rem, min(11.5vw, 5.6dvh), 3.8rem);
+  }
   .gala__photo {
-    inset: clamp(-1.6rem, -2.6dvh, -0.6rem) -16% clamp(-6.5rem, -10dvh, -3rem);
+    inset: clamp(-0.6rem, -1dvh, -0.2rem) 4% clamp(-6.5rem, -10dvh, -3rem) -14%;
     -webkit-mask-image: linear-gradient(to bottom, #000 64%, transparent 96%);
     mask-image: linear-gradient(to bottom, #000 64%, transparent 96%);
   }
@@ -473,38 +497,6 @@
     object-fit: cover;
     object-position: 50% 0%;
   }
-}
-
-.gala__tagline {
-  position: absolute;
-  top: 7%;
-  z-index: 2;
-  width: 31%;
-  max-width: 220px;
-  white-space: nowrap;
-}
-.gala__tagline p {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  font-size: clamp(0.52rem, min(2.25vw, 1.55dvh), 0.95rem);
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  line-height: 1.5;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
-}
-.gala__tagline .gala-rule {
-  width: 100%;
-  margin: 0.3rem 0 0;
-}
-.gala__tagline--left {
-  left: 0;
-  text-align: left;
-}
-.gala__tagline--right {
-  right: 0;
-  top: 13%;
-  text-align: right;
 }
 
 /* ---------- Bottom block ---------- */
@@ -527,7 +519,7 @@
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
-/* 18ᵀᴴ + script "Birthday" — same pairing as the home hero (The Seasons + Above the Beyond) */
+/* Optional number + script occasion — same pairing as the home hero (The Seasons + Above the Beyond) */
 .gala__occasion {
   display: flex;
   flex-direction: column;
@@ -570,6 +562,10 @@
 .gala__occasion-script-wrap {
   display: block;
 }
+/* No number above it: the script clears the kicker line instead of overlapping */
+.gala__occasion-script-wrap:first-child {
+  margin-top: 0.22em;
+}
 
 /* Progress: a gold bar. The fill width comes from LoadingScreen's progress
    loop; the stripes, glint and spark move on their own so it always looks alive. */
@@ -589,7 +585,7 @@
   height: 6px;
   padding: 1px;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgba(20, 0, 4, 0.75), rgba(60, 6, 14, 0.55));
+  background: linear-gradient(180deg, rgba(7, 14, 29, 0.75), rgba(22, 35, 65, 0.55));
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.6),
     0 0 0 1px rgba(217, 181, 106, 0.45),
@@ -650,7 +646,7 @@
 }
 
 @media (max-height: 580px) {
-  .gala__tagline {
+  .gala__promise {
     display: none;
   }
 }

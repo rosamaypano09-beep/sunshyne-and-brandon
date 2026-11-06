@@ -48,7 +48,7 @@ const GOLD_INK = "color-mix(in srgb, var(--color-welcome-gold) 78%, var(--color-
 const NAVY = "var(--color-motif-deep)" // card headings / names: wine
 const SCRIPT = GOLD
 const BODY = "color-mix(in srgb, var(--color-welcome-text) 85%, var(--color-motif-deep))"
-const NAV_GOLD = "linear-gradient(180deg, var(--color-motif-accent) 0%, var(--color-motif-deep) 100%)"
+const NAV_GOLD = "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)"
 const GOLD_BORDER = "color-mix(in srgb, var(--color-welcome-gold) 45%, transparent)"
 const GOLD_BORDER_SOFT = "color-mix(in srgb, var(--color-welcome-gold) 25%, transparent)"
 const CHAMPAGNE = "var(--color-motif-blush)"
@@ -497,7 +497,7 @@ export function TableFinder() {
             className={`${cinzel.className} ${sectionType.label} font-semibold uppercase leading-normal tracking-[0.18em] min-[400px]:tracking-[0.28em] sm:tracking-[0.36em]`}
             style={{ color: GOLD, textShadow: TEXT_LIFT }}
           >
-            {celebrant}&rsquo;s Debut
+            {celebrant}
           </p>
 
           <h1

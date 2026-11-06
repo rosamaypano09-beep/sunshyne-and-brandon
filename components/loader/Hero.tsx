@@ -666,10 +666,22 @@ export const Hero: React.FC<HeroProps> = ({
                         <span className="env-invite-letter-divider" aria-hidden="true" />
                         {gala.cardLine && <span className="env-invite-letter-line">{fill(gala.cardLine)}</span>}
                       </div>
-                      <span className="env-invite-letter-title" role="img" aria-label={`${fill(gala.title)} — ${fill(gala.subtitle)}`}>
-                        <span className={`${aboveTheBeyond.className} env-invite-letter-title__main`}>
-                          {fill(gala.title)}
-                        </span>
+                      <span className="env-invite-letter-title" role="img" aria-label={[fill(gala.title), fill(gala.subtitle)].filter(Boolean).join(" — ")}>
+                        {gala.nameImage ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={gala.nameImage} alt="" aria-hidden="true" className="env-invite-letter-title__image" />
+                        ) : (
+                          <span className={`${aboveTheBeyond.className} env-invite-letter-title__main`}>
+                            {/* Two lines, like the poster: too wide for one on the card */}
+                            {fill(gala.title)
+                              .split(/\s(?=&)/)
+                              .map((line) => (
+                                <span key={line} className="env-invite-letter-title__line">
+                                  {line}
+                                </span>
+                              ))}
+                          </span>
+                        )}
                         {gala.subtitle && (
                           <span className={`${cinzel.className} env-invite-letter-title__script`}>
                             {fill(gala.subtitle)}
@@ -680,12 +692,14 @@ export const Hero: React.FC<HeroProps> = ({
                         <span
                           className="env-invite-letter-occasion"
                           role="img"
-                          aria-label={`${gala.occasionNumber}${gala.occasionSuffix} ${gala.occasion}`}
+                          aria-label={`${gala.occasionNumber}${gala.occasionSuffix} ${gala.occasion}`.trim()}
                         >
-                          <span className={`${theSeasons.className} env-invite-letter-occasion__age`}>
-                            {gala.occasionNumber}
-                            <sup>{gala.occasionSuffix}</sup>
-                          </span>
+                          {gala.occasionNumber && (
+                            <span className={`${theSeasons.className} env-invite-letter-occasion__age`}>
+                              {gala.occasionNumber}
+                              <sup>{gala.occasionSuffix}</sup>
+                            </span>
+                          )}
                           <span className={`${aboveTheBeyond.className} env-invite-letter-occasion__script`}>
                             {gala.occasion}
                           </span>

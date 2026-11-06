@@ -88,7 +88,7 @@ const sectionsRevealVariants = {
 }
 
 /** WebGL Silk needs a hex color — read from --color-silk in app/globals.css. */
-const SILK_FALLBACK = "#2B0A10"
+const SILK_FALLBACK = "#161e32"
 
 function rgbToHex(rgb: string) {
   const parts = rgb.match(/\d+/g)
@@ -291,7 +291,7 @@ export function InvitationPage({ sponsorsList, showEntourage = true }: Invitatio
               <RevealSection><BookOfGuests /></RevealSection>
               <RevealSection><Registry /></RevealSection>
               <RevealSection><FAQ /></RevealSection>
-              <RevealSection><WeddingPlaylist /></RevealSection>
+              {/* <RevealSection><WeddingPlaylist /></RevealSection> */}
               <RevealSection><SnapShare /></RevealSection>
               <RevealSection><SeeYouThere /></RevealSection>
               <RevealSection><Footer /></RevealSection>
