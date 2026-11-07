@@ -171,12 +171,14 @@ function TimelineTitle({ title, subtitle }: { title: string; subtitle: string })
   )
 }
 
-const ICONS: Record<TimelineIconName, TimelineIcon> = {
+// Fallback icons (used when an event has no image); unmapped names fall back to rings
+const ICONS: Partial<Record<TimelineIconName | "guests", TimelineIcon>> = {
   arrival: ArrivalIcon,
   guests: GuestsIcon,
   rings: RingsIcon,
   departure: DepartureIcon,
   cocktail: CocktailIcon,
+  toast: CocktailIcon,
   fireworks: FireworksIcon,
   dance: DanceIcon,
 }
@@ -435,10 +437,11 @@ const lineIn: Variants = {
   show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease: entryEase } },
 }
 
-// The event time draws together from wide tracking
+// The event time pill settles in and comes into focus (tracking stays in CSS so it
+// can tighten on phones — range times like "3:30 – 4:30 PM" need the room)
 const timeIn: Variants = {
-  hidden: { opacity: 0, letterSpacing: "0.5em" },
-  show: { opacity: 1, letterSpacing: "0.2em", transition: { duration: 0.9, ease: entryEase } },
+  hidden: { opacity: 0, scale: 0.9, filter: "blur(6px)" },
+  show: { opacity: 1, scale: 1, filter: "blur(0px)", transition: { duration: 0.8, ease: entryEase } },
 }
 
 function TimelineItem({ event, index }: { event: TimelineEvent; index: number }) {
@@ -531,8 +534,9 @@ function TimelineText({
 
   return (
     <div className={`max-w-md ${textAlign} ${align === "right" ? "ml-auto" : "mr-auto"}`}>
+      {event.time && (
       <motion.p
-        className={`${cinzel.className} inline-block rounded-full border px-2.5 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.2em] sm:px-3 sm:text-[0.7rem]`}
+        className={`${cinzel.className} inline-block whitespace-nowrap rounded-full border px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.06em] min-[400px]:px-2.5 min-[400px]:tracking-[0.1em] sm:px-3 sm:text-[0.7rem] sm:tracking-[0.18em] ${align === "right" ? "origin-right" : "origin-left"}`}
         style={{
           color: "var(--color-motif-yellow)",
           borderColor: "color-mix(in srgb, var(--color-motif-yellow) 55%, transparent)",
@@ -543,8 +547,9 @@ function TimelineText({
       >
         {event.time}
       </motion.p>
+      )}
       <motion.p
-        className={`${theSeasons.className} mt-2 text-[1.05rem] uppercase leading-tight tracking-[0.08em] sm:text-[1.2rem] md:text-[1.15rem] lg:text-[1.3rem]`}
+        className={`${theSeasons.className} ${event.time ? "mt-2" : ""}text-[1.05rem] uppercase leading-tight tracking-[0.08em] sm:text-[1.2rem] md:text-[1.15rem] lg:text-[1.3rem]`}
         style={{ color: IVORY, textShadow: titleShadow }}
         variants={lineIn}
       >

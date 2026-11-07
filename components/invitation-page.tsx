@@ -29,6 +29,7 @@ const MessageVideo = dynamic(() => import("@/components/sections/message-video")
 const Messages = dynamic(() => import("@/components/sections/messages").then(mod => mod.Messages))
 const Details = dynamic(() => import("@/components/sections/details").then(mod => mod.Details))
 const WeddingTimeline = dynamic(() => import("@/components/sections/wedding-timeline").then(mod => mod.WeddingTimeline))
+const RecommendedHotel = dynamic(() => import("@/components/sections/recommended-hotel").then(mod => mod.RecommendedHotel))
 const Entourage = dynamic(() => import("@/components/sections/entourage").then(mod => mod.Entourage))
 const BookOfGuests = dynamic(() => import("@/components/sections/book-of-guests").then(mod => mod.BookOfGuests))
 const FAQ = dynamic(() => import("@/components/sections/faq").then(mod => mod.FAQ))
@@ -284,6 +285,7 @@ export function InvitationPage({ sponsorsList, showEntourage = true }: Invitatio
               {/* <MessageVideo /> */}
               <RevealSection><Details /></RevealSection>
               <RevealSection><WeddingTimeline /></RevealSection>
+              <RevealSection><RecommendedHotel /></RevealSection>
               {showEntourage && siteConfig.entourage.show !== false && (
                 <RevealSection><Entourage sponsorsList={sponsorsList} /></RevealSection>
               )}

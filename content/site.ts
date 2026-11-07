@@ -108,20 +108,20 @@ const EVENT_DAY = "Saturday"
 
 const TIMES = {
   guestArrival: "9:00 AM", // ⚠ check — from the earlier draft, confirm with the couple
-  program: "9:30 AM", // Ceremony — countdown target
-  end: "12:00 noon", // Reception ⚠ check — from the earlier draft, confirm with the couple
+  program: "3:30 PM", // Ceremony — countdown target
+  end: "5:30 PM", // Reception (cocktail hour at Dusit Thani)
 }
 
 // ── Venue ───────────────────────────────────────────────────────────────────
 const VENUE = {
-  name: "Davao City", // ⚠ check — add the church / venue name once confirmed
-  address: "Davao City, Philippines",
-  map: "", // Google Maps pin (directions button + QR); "" hides the map QR and buttons
+  name: "Dusit Thani", // ⚠ check — add the church / venue name once confirmed
+  address: "Stella Hizon Reyes Drive, Bo Pampanga, Davao City, 8000, Philippines",
+  map: "https://maps.app.goo.gl/JUsqPDCHCKBXAht69", // Google Maps pin (directions button + QR); "" hides the map QR and buttons
   // Step-by-step directions (FAQ) — add once the venue is confirmed
   directions: [] as string[],
   landmarks: [] as string[],
   // Venue card slideshow (Event Details) — [] shows the gold monogram panel
-  photos: [] as string[],
+  photos: ["/Details/venue (6).jpg", "/Details/venue (7).jpg", "/Details/venue (8).jpg"] as string[],
 }
 const CEREMONY_VENUE = VENUE
 const RECEPTION_VENUE = VENUE
@@ -367,6 +367,7 @@ export const siteConfig = {
       { href: "#messages", label: "Messages" },
       { href: "#details", label: "Details" },
       { href: "#wedding-timeline", label: "Program" },
+      { href: "#stay", label: "Stay & Explore" },
       { href: "#entourage", label: "Entourage" },
       { href: "#guest-list", label: "RSVP" },
       { href: "#guests", label: "Guests" },
@@ -703,11 +704,10 @@ export const siteConfig = {
   },
   // Program flow (components/sections/wedding-timeline.tsx)
   weddingTimeline: {
-    // Built from EVENT_DATE + TIMES so it always matches Event Details
-    kicker: `${EVENT_DATE.replace(/,\s*\d{4}$/, "")} · Ceremony ${TIMES.program} · Reception ${TIMES.end}`,
-    title: "Program",
-    subtitle: "as our fairy tale unfolds",
-    description: "From the first welcome to the final farewell, here is every chapter of our wedding day.",
+    kicker: `The Wedding of ${COUPLE.groom} & ${COUPLE.bride}`,
+    title: "Wedding Day",
+    subtitle: "timeline",
+    description: "From our vows at sunset to the last dance of the night, here is how our day will unfold.",
     quote: "Therefore what God has joined together, let no one separate.",
     quoteCitation: "Mark 10:9",
     // Optional corner decorations — leave "" to hide
@@ -719,54 +719,26 @@ export const siteConfig = {
     },
     // Each event — shown top to bottom in this order (move a block to reorder):
     //   show:     false = hide it (kept here to edit later)
-    //   time:     "" hides the time
+    //   time:     "" hides the time (ranges like "3:30 – 4:30 PM" are fine)
     //   location: text under the title; {ceremony} / {reception} → venue name ("" to hide)
     //   image:    line-art illustration in /public/weddingtimeline (black on transparent,
-    //             shown gold); "" uses the icon instead
+    //             shown white); "" uses the icon instead
     //   icon:     "rings" | "toast" | "dinner" | "dance" | "arrival" | "departure" | …
     //   description: optional extra line ("" to hide)
-    // ⚠ check — placeholder program; only the 9:30 AM ceremony is confirmed
     events: [
       {
         show: true,
-        time: "",
-        title: "Entourage Call Time",
-        description: "Our wedding party gathers first.",
-        location: "",
-        image: "/weddingtimeline/Wedding Entourage Call Time Logo.png",
-        icon: "crown" as TimelineIconName,
-      },
-      {
-        show: true,
-        time: TIMES.guestArrival,
-        title: "Arrival of Guests",
-        description: "Find your seat as our story begins.",
-        location: "",
-        image: "/weddingtimeline/Elegant Wedding Guests Arrive Sign.png",
-        icon: "arrival" as TimelineIconName,
-      },
-      {
-        show: true,
-        time: TIMES.program,
-        title: "Wedding Ceremony",
+        time: "3:30 – 4:30 PM",
+        title: "Ceremony",
         description: "Two hearts, one promise.",
-        location: "",
+        location: "The View",
         image: "/weddingtimeline/WeddingCeremony.png",
         icon: "rings" as TimelineIconName,
       },
       {
         show: true,
-        time: "",
-        title: "Just Married",
-        description: "The bells ring for the newlyweds.",
-        location: "",
-        image: "/weddingtimeline/assemble.png",
-        icon: "rose" as TimelineIconName,
-      },
-      {
-        show: true,
-        time: "",
-        title: "Photo Session",
+        time: "4:30 – 5:00 PM",
+        title: "Pictorials",
         description: "Moments to keep forever.",
         location: "",
         image: "/weddingtimeline/PhotoSession.png",
@@ -774,66 +746,48 @@ export const siteConfig = {
       },
       {
         show: true,
-        time: "",
+        time: "5:00 – 5:30 PM",
+        title: "Travel Time",
+        description: "From The View to Dusit Thani.",
+        location: "",
+        image: "/weddingtimeline/Minimal Van Journey Icon.png",
+        icon: "departure" as TimelineIconName,
+      },
+      {
+        show: true,
+        time: "5:30 – 6:30 PM",
         title: "Cocktail Hour",
         description: "Raise a glass to the happy couple.",
-        location: "",
+        location: "Dusit Thani",
         image: "/weddingtimeline/CockTailHour.png",
         icon: "toast" as TimelineIconName,
       },
       {
         show: true,
-        time: TIMES.end,
-        title: "Reception",
-        description: "The doors open and the celebration begins.",
+        time: "6:30 – 7:00 PM",
+        title: "Pre-Program",
+        description: "Speeches & dances.",
         location: "",
         image: "/weddingtimeline/reception welcom.png",
         icon: "fireworks" as TimelineIconName,
       },
       {
         show: true,
-        time: "",
-        title: "Grand Entrance",
-        description: "Welcome the newlyweds as they make their entrance.",
-        location: "",
-        image: "/weddingtimeline/arrivalimage.png",
-        icon: "crown" as TimelineIconName,
-      },
-      {
-        show: true,
-        time: "",
-        title: "Wedding Feast",
+        time: "7:00 – 8:00 PM",
+        title: "Dinner Time",
         description: "Come, be our guest.",
         location: "",
-        image: "/weddingtimeline/WeddingFeast.png", // DinnerService.png without its "Dinner Time" lettering (noon reception)
+        image: "/weddingtimeline/DinnerService.png",
         icon: "dinner" as TimelineIconName,
       },
       {
         show: true,
-        time: "",
-        title: "Cake Cutting",
-        description: "A sweet moment to share.",
-        location: "",
-        image: "/weddingtimeline/cakecutting.png",
-        icon: "gift" as TimelineIconName,
-      },
-      {
-        show: true,
-        time: "",
-        title: "First Dance",
-        description: "A tale as old as time, told in a dance.",
-        location: "",
-        image: "/weddingtimeline/dance.png",
-        icon: "dance" as TimelineIconName,
-      },
-      {
-        show: true,
-        time: "",
-        title: "After Party & Send-Off",
+        time: "8:00 PM Onwards",
+        title: "Games & Party",
         description: "And they lived happily ever after.",
         location: "",
         image: "/weddingtimeline/SendOff.png",
-        icon: "departure" as TimelineIconName,
+        icon: "dance" as TimelineIconName,
       },
     ],
   },
@@ -883,8 +837,8 @@ export const siteConfig = {
     invite: {
       title: "You are Invited",
       scriptFallback: "to our wedding",
-      greeting: "Hello {name}, you are invited to the wedding of {celebrant}!",
-      seats: "We've reserved {count} for you.",
+      greeting: "Dear {name}, we'd be honored to have you with us.",
+      seats: "{count} reserved for you",
       seatSingular: "seat",
       seatPlural: "seats",
     },
@@ -1610,6 +1564,175 @@ export const siteConfig = {
     closing:
       "Thank you for helping make our wedding day unforgettable. Your photos and messages become memories we will treasure for a lifetime.",
     closingTag: "Thank you for sharing the joy",
+  },
+  // Where to stay + things to do (components/sections/recommended-hotel.tsx)
+  // mapsLink: "" builds a Google Maps search from the name, so the button + QR always work.
+  // Paste a real maps.app.goo.gl pin to point at an exact spot.
+  // Set show: false on a hotel / activity to hide it; hide a whole list by emptying it.
+  recommendedStay: {
+    hotels: {
+      kicker: "For our traveling guests",
+      title: "Where to Stay",
+      subtitle: "our picks for you",
+      intro:
+        "So many of you are traveling to Davao to celebrate with us, and that means the world to us. We've gathered a few places we personally recommend, starting with special wedding rates at our reception venue, Dusit D2 Davao. Choose whichever suits your plans and budget. Our wedding falls during the Kadayawan Festival, when the city fills up fast, so we suggest booking early.",
+      // Featured hotel at the reception venue, with the wedding room rates (show: false hides it)
+      featured: {
+        show: true,
+        kicker: "Stay where we celebrate",
+        name: "Dusit D2 Davao",
+        area: "Lanang · Our Reception Venue",
+        description:
+          "The most convenient choice of all: stay right where our reception happens. After a night of dinner, dancing and games, your room is just an elevator ride away. The hotel has kindly given our guests special wedding room rates.",
+        image: VENUE.photos[0] ?? "",
+        mapsLink: VENUE.map,
+        rates: {
+          title: "Wedding Event Room Rates",
+          // ⚠ check — how should guests book / which name to mention? ("" hides it)
+          bookingNote: "",
+          rooms: [
+            { name: "D'Luxe Room", single: "PHP 5,800", double: "PHP 7,400" },
+            { name: "D'Suite Room", single: "PHP 8,400", double: "PHP 9,400" },
+          ],
+          suites: [
+            { name: "Presidential Suite", tag: "", capacity: "Good for 4 adults", rate: "PHP 30,000" },
+            { name: "Chairman Suite", tag: "DTRD", capacity: "Good for 6 adults", rate: "PHP 40,000" },
+            { name: "Corner Suite", tag: "DTRD", capacity: "Good for 4 adults", rate: "PHP 15,000" },
+          ],
+          extraPerson: "PHP 2,300",
+          footnote: "DTRD · Dusit Thani Residence Davao",
+        },
+      },
+      items: [
+        {
+          show: true,
+          name: "Waterfront Insular Hotel Davao",
+          area: "Lanang · Seaside",
+          description:
+            "A classic Davao seaside resort with palm-lined gardens and views of the gulf. A calm, breezy place to unwind between celebrations, and close to the airport.",
+          image: "/suggestedHotel/Waterfront insular hotel Davao.jpeg",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Seda Abreeza Davao",
+          area: "J.P. Laurel Ave · City Center",
+          description:
+            "Modern and polished, right beside Abreeza Mall. Perfect if you'd like shops, cafés and restaurants just steps from your room.",
+          image: "/suggestedHotel/Seda Abreeza Davao.jpg",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Acacia Hotel Davao",
+          area: "J.P. Laurel Ave · City Center",
+          description:
+            "An elegant, refined stay with warm Filipino hospitality and a lovely pool, a favorite of ours for a relaxing weekend in the city.",
+          image: "/suggestedHotel/Acacia Hotel Davao.jpg",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Park Inn by Radisson Davao",
+          area: "Lanang · SM Lanang",
+          description:
+            "Bright, comfortable rooms connected to SM Lanang Premier. Very convenient for dining, shopping and getting around.",
+          image: "/suggestedHotel/Park inn by Radisson.png",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Go Hotels Lanang",
+          area: "Lanang · Budget-friendly",
+          description:
+            "Clean, simple and wallet-friendly. A great home base if you plan to spend most of your days out exploring.",
+          image: "/suggestedHotel/Go Hotels Lanang.jpeg",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Hop Inn Hotel Davao",
+          area: "Davao City · Budget-friendly",
+          description:
+            "A cozy, no-fuss option with everything you need for a good night's rest and an early start the next day.",
+          image: "/suggestedHotel/Hop inn Hotel.jpg",
+          mapsLink: "",
+        },
+      ],
+    },
+    // Featured festival card, shown between the hotels and Explore Davao (show: false hides it)
+    festival: {
+      show: true,
+      kicker: "Happening during our wedding week",
+      name: "Kadayawan Festival",
+      year: "2027",
+      dates: "August 6 – August 22, 2027",
+      image: "/kadayawan/kadayawan.png",
+      description:
+        "Davao's grandest celebration, a city-wide thanksgiving for the bounty of the harvest and a tribute to the culture of its indigenous peoples. Expect streets alive with color, music and flowers.",
+      note: "Our wedding falls right in the middle of the festivities, so come early or stay a few extra days and celebrate with the whole city!",
+      highlights: ["Street dancing parade", "Floral float parade", "Fruit & flower showcases", "Tribal arts & crafts"],
+      link: "https://en.wikipedia.org/wiki/Kadayawan_Festival", // "" hides the button + QR
+      linkLabel: "About the Festival",
+    },
+    activities: {
+      kicker: "Make a trip of it",
+      title: "Explore Davao",
+      subtitle: "while you're here",
+      intro:
+        "Since you're coming all this way, why not stay a little longer? Here are a few of our favorite things to see, eat and do around the city. We hope you fall in love with Davao the way we have.",
+      // ⚠ check — suggested list; swap in the couple's own favorites
+      items: [
+        {
+          show: true,
+          name: "Philippine Eagle Center",
+          category: "Nature",
+          description:
+            "Meet the majestic Philippine Eagle, our national bird, in a forest sanctuary up in the cool hills of Malagos.",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Samal Island",
+          category: "Beach",
+          description:
+            "A short boat ride across the gulf to white-sand beaches, clear water and island resorts. Perfect for a day trip.",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Eden Nature Park",
+          category: "Mountain Escape",
+          description:
+            "Pine trees, fresh mountain air and farm-to-table meals, a refreshing escape just outside the city.",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "People's Park",
+          category: "City Stroll",
+          description:
+            "A green oasis downtown filled with sculptures inspired by Mindanao's indigenous peoples. A lovely afternoon walk.",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Roxas Night Market",
+          category: "Food",
+          description:
+            "Grilled skewers, fresh fruit and local street food. Come hungry, and brave enough to try durian!",
+          mapsLink: "",
+        },
+        {
+          show: true,
+          name: "Jack's Ridge",
+          category: "Dining & Views",
+          description:
+            "Hilltop dining with a sweeping view of the city lights. Lovely for a relaxed dinner after a full day.",
+          mapsLink: "",
+        },
+      ],
+    },
   },
   // Accommodation (components/sections/accommodation.tsx — not on the main page)
   accommodation: {

@@ -1,7 +1,7 @@
 "use client"
 
 import { celebrantName } from "@/lib/celebrant"
-import { useState, useEffect, useMemo, useRef, type CSSProperties } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { createPortal } from "react-dom"
 import {
   Search,
@@ -14,7 +14,6 @@ import {
   RefreshCw,
   X,
   Heart,
-  Sparkles,
   Phone,
   ShieldCheck,
   UserPlus,
@@ -26,9 +25,10 @@ import {
 import { cinzel } from "@/lib/fonts"
 import localFont from "next/font/local"
 import { useSiteConfig } from "@/hooks/use-site-config"
-import { modalTitleSize, sectionType, welcomeTitleSize } from "@/lib/section-typography"
+import { sectionType, welcomeTitleSize } from "@/lib/section-typography"
 import { fetchUntilReady, isAbortError } from "@/lib/fetch-until-ready"
 import { fetchInvitationList, invalidateInvitationData, readCachedInvitationList } from "@/lib/invitation-data"
+import { RoseBloom } from "@/components/rose-bloom"
 
 
 const theSeasons = localFont({
@@ -43,9 +43,10 @@ const aboveTheBeyond = localFont({
   variable: "--font-above-beyond",
 })
 
-// Red velvet vibe (same as the sections around it): the RSVP card and its modals are
-// ivory paper with wine headings, gold accents and crimson → wine buttons. The area
-// around the card is left without a background or corner decorations.
+// Red velvet vibe: no section background (the card sits on the page backdrop); the RSVP
+// card and its modals are ivory paper
+// with wine headings, gold accents and crimson → wine buttons. Modals open with a
+// wine header band (same as the hotel rates sheet).
 // TEAL keeps its name from the template but is now the wine ink used on ivory.
 const TEAL = "var(--color-motif-deep)"
 const BUTTON = "var(--color-motif-accent)"
@@ -105,6 +106,138 @@ const noticeStyle = {
   borderColor: "color-mix(in srgb, var(--color-motif-deep) 40%, transparent)",
   color: TEAL,
 } as const
+
+// Text sitting directly on the page backdrop / modal header band
+const textLift =
+  "0 1px 2px color-mix(in srgb, var(--color-coastal-deep) 60%, transparent), 0 2px 14px color-mix(in srgb, var(--color-coastal-deep) 45%, transparent)"
+const onBg = { color: "#fff", textShadow: textLift } as const
+const onBgGold = { color: GOLD, textShadow: textLift } as const
+
+// Modal shells: bottom sheet on phones (thumb-friendly, keyboard-safe), centered card from sm up
+const sheetOverlayClass =
+  "fixed inset-0 flex items-end justify-center overflow-hidden backdrop-blur-sm animate-in fade-in duration-200 sm:items-center sm:p-4"
+const sheetPanelClass =
+  "relative flex max-h-[94dvh] w-full max-w-full flex-col overflow-hidden overscroll-x-none rounded-t-[1.6rem] animate-in slide-in-from-bottom-8 duration-300 @container/guest-modal sm:max-h-[calc(100dvh-2rem)] sm:max-w-lg sm:rounded-[1.6rem] sm:slide-in-from-bottom-4"
+
+function RoseDivider({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden>
+      <span className="h-px w-10 sm:w-14" style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold))" }} />
+      <span
+        className="flex h-7 w-7 items-center justify-center rounded-full"
+        style={{ border: "1px solid color-mix(in srgb, var(--color-welcome-gold) 60%, transparent)", background: "var(--color-motif-deep)" }}
+      >
+        <RoseBloom className="h-3.5 w-auto" />
+      </span>
+      <span className="h-px w-10 sm:w-14" style={{ background: "linear-gradient(to left, transparent, var(--color-welcome-gold))" }} />
+    </div>
+  )
+}
+
+// The Seasons has no clean glyphs for symbols / digits — render only those in Cinzel
+function SpecialCharFont({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/([^\p{L}\s]+)/u).map((part, i) =>
+        i % 2 === 1 ? (
+          <span key={i} className={`${cinzel.className} tracking-normal`}>
+            {part}
+          </span>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
+
+// Numbered step heading inside the RSVP form ("1  Can you attend?")
+function StepLabel({ n, htmlFor, children }: { n: number; htmlFor?: string; children: React.ReactNode }) {
+  return (
+    <label htmlFor={htmlFor} className={`${modalLabelClass} !mb-0`} style={{ color: palette.heading }}>
+      <span
+        className={`${cinzel.className} flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[0.6rem] font-bold not-italic sm:h-[1.35rem] sm:w-[1.35rem]`}
+        style={{ background: DEEP_GRADIENT, color: GOLD, boxShadow: "0 0 0 2px color-mix(in srgb, var(--color-welcome-gold) 30%, transparent)" }}
+        aria-hidden
+      >
+        {n}
+      </span>
+      <span>{children}</span>
+    </label>
+  )
+}
+
+// Wine header band shared by the modals: grab handle (phones), close, kicker, title + script
+function ModalBand({
+  id,
+  kicker,
+  title,
+  script,
+  onClose,
+  closeLabel = "Close",
+  compact = false,
+  children,
+}: {
+  id?: string
+  kicker?: string
+  title: string
+  script?: React.ReactNode
+  onClose?: () => void
+  closeLabel?: string
+  compact?: boolean
+  children?: React.ReactNode
+}) {
+  return (
+    <div
+      className={`relative shrink-0 overflow-hidden px-5 text-center sm:px-7 ${compact ? "pb-3 pt-5" : "pb-4 pt-5 sm:pb-6 sm:pt-7"}`}
+      style={{ background: DEEP_GRADIENT }}
+    >
+      {/* soft gold glow + bottom hairline */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(80% 90% at 50% 0%, color-mix(in srgb, var(--color-welcome-gold) 22%, transparent) 0%, transparent 70%)" }}
+      />
+      <span aria-hidden className="absolute inset-x-0 bottom-0 h-px" style={dividerLineStyle} />
+      <span aria-hidden className="absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-white/35 sm:hidden" />
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-welcome-gold)] sm:right-4 sm:top-4"
+          style={{ borderColor: HAIRLINE, color: "#fff" }}
+          aria-label={closeLabel}
+        >
+          <X className="h-4 w-4" />
+        </button>
+      )}
+      <div className="relative">
+        {kicker && !compact && (
+          <p className={`${cinzel.className} mb-2 text-[0.5625rem] font-bold uppercase tracking-[0.32em] sm:text-[0.625rem]`} style={onBgGold}>
+            {kicker}
+          </p>
+        )}
+        <h3 id={id} className="mx-auto max-w-full break-words px-9 text-center">
+          <span
+            className={`${theSeasons.className} block uppercase leading-[0.95] tracking-[0.1em] ${compact ? "text-[1.15rem] sm:text-[1.35rem]" : "text-[1.4rem] sm:text-[2rem]"}`}
+            style={onBg}
+          >
+            {title}
+          </span>
+          {script ? (
+            <span
+              className={`${aboveTheBeyond.className} mx-auto block w-fit max-w-full leading-[1.25] ${compact ? "mt-0.5 text-[1.05rem] sm:text-[1.2rem]" : "mt-1 text-[1.25rem] sm:text-[1.65rem]"}`}
+              style={onBgGold}
+            >
+              {script}
+            </span>
+          ) : null}
+        </h3>
+        {children}
+      </div>
+    </div>
+  )
+}
 
 // "Hello {name}" → string with values, or React nodes when a value is a node
 function fill(template: string, values: Record<string, React.ReactNode>): React.ReactNode {
@@ -255,15 +388,20 @@ export function GuestList() {
         setShowSearchModal(false)
       }
     }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [showSearchModal, showModal, showRequestModal])
+
+  // One scroll lock for every modal (search, RSVP, request, phone alert, success)
+  const anyModalOpen = showSearchModal || showModal || showRequestModal || showPhoneAlert || !!success
+  useEffect(() => {
+    if (!anyModalOpen) return
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = "hidden"
-    window.addEventListener("keydown", onKey)
-
     return () => {
       document.body.style.overflow = previousOverflow
-      window.removeEventListener("keydown", onKey)
     }
-  }, [showSearchModal, showModal, showRequestModal])
+  }, [anyModalOpen])
 
   // Update companions array based on allowedGuests when a guest is selected
   useEffect(() => {
@@ -552,6 +690,18 @@ export function GuestList() {
     return () => window.removeEventListener("keydown", onKey)
   }, [showPhoneAlert])
 
+  // Escape closes the RSVP / request modals (not while submitting or while an alert is up)
+  useEffect(() => {
+    if (!showModal && !showRequestModal) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || isLoading || showPhoneAlert || success || requestSuccess) return
+      if (showRequestModal) handleCloseRequestModal()
+      else if (showModal) handleCloseModal()
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  })
+
   const handleSubmitRequest = async () => {
     if (!requestFormData.Name) {
       setError(copy.messages.nameRequired)
@@ -611,15 +761,28 @@ export function GuestList() {
 
   return (
     <div
-      className={`${theSeasons.variable} ${aboveTheBeyond.variable} relative w-full overflow-visible`}
+      className={`${theSeasons.variable} ${aboveTheBeyond.variable} relative w-full`}
     >
     <section
       id="guest-list"
-      className="relative z-30 scroll-mt-16 overflow-visible px-5 pb-10 pt-12 sm:scroll-mt-20 sm:px-8 sm:pb-12 sm:pt-14 md:scroll-mt-24"
+      className="relative z-30 scroll-mt-16 px-5 pb-14 pt-14 sm:scroll-mt-20 sm:px-8 sm:pb-16 sm:pt-16 md:scroll-mt-24 md:pb-20 md:pt-20"
     >
+      {/* Eyebrow on the velvet, above the card */}
+      <p
+        className={`${cinzel.className} mb-5 text-center text-[0.6rem] font-semibold uppercase tracking-[0.34em] min-[400px]:tracking-[0.38em] sm:mb-6 sm:text-[0.65rem] sm:tracking-[0.44em]`}
+        style={onBgGold}
+      >
+        Kindly Respond
+      </p>
+
+      <div className="relative mx-auto w-full max-w-[23.5rem] sm:max-w-[27rem]">
       <fieldset
-        className="relative mx-auto w-full max-w-[22.5rem] overflow-visible rounded-[1.85rem] px-5 pb-8 pt-6 text-center @container/rsvp sm:max-w-[24rem] sm:px-7 sm:pb-9 sm:pt-7"
-        style={modalCardStyle}
+        className="relative w-full overflow-hidden rounded-[1.85rem] px-6 pb-9 pt-8 text-center @container/rsvp sm:px-9 sm:pb-10 sm:pt-9"
+        style={{
+          ...modalCardStyle,
+          boxShadow:
+            "0 36px 70px -28px color-mix(in srgb, var(--color-coastal-deep) 85%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--color-welcome-gold) 45%, transparent)",
+        }}
       >
         {/* Inner frame line */}
         <span
@@ -680,19 +843,27 @@ export function GuestList() {
           {copy.intro}
         </p>
 
+        <RoseDivider className="mt-4 sm:mt-5" />
+
         {siteConfig.details.rsvp.deadline ? (
-          <p
-            className={`${cinzel.className} ${sectionType.label} mx-auto mt-4 font-semibold uppercase tracking-[0.16em] sm:mt-5 sm:tracking-[0.18em]`}
-            style={{ color: palette.accent }}
+          // Deadline set like a little framed date card
+          <div
+            className="relative mx-auto mt-5 max-w-[17rem] rounded-2xl border px-4 pb-3.5 pt-3 sm:mt-6"
+            style={innerSurfaceStyle}
           >
-            {copy.deadlineLabel}
-            <span
-              className={`${theSeasons.className} mt-2 block text-[1.45rem] font-normal normal-case leading-tight tracking-[0.04em] sm:text-[1.75rem] md:text-[1.95rem]`}
+            <p
+              className={`${cinzel.className} text-[0.5625rem] font-bold uppercase tracking-[0.3em] sm:text-[0.625rem]`}
+              style={{ color: palette.accent }}
+            >
+              {copy.deadlineLabel}
+            </p>
+            <p
+              className={`${theSeasons.className} mt-1.5 text-[1.35rem] leading-tight tracking-[0.04em] sm:text-[1.6rem]`}
               style={{ color: TEAL }}
             >
-              {siteConfig.details.rsvp.deadline.replace(/\.\s*$/, "")}
-            </span>
-          </p>
+              <SpecialCharFont text={siteConfig.details.rsvp.deadline.replace(/\.\s*$/, "")} />
+            </p>
+          </div>
         ) : null}
 
         <button
@@ -701,12 +872,39 @@ export function GuestList() {
             setSearchQuery("")
             setShowSearchModal(true)
           }}
-          className={`${cinzel.className} ${sectionType.label} mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-full px-6 py-2.5 font-semibold uppercase tracking-[0.12em] relative border transition-all duration-200 hover:scale-[1.03] hover:brightness-110 active:scale-[0.98] sm:mt-6 sm:tracking-[0.14em]`}
+          className={`${cinzel.className} ${sectionType.label} group relative mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full border px-6 py-3 font-semibold uppercase tracking-[0.14em] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 sm:mt-7 sm:tracking-[0.16em]`}
           style={primaryButtonStyle}
         >
-          {copy.openButton}
+          {/* gold sheen sweeps across on hover */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 opacity-0 transition-all duration-700 group-hover:left-full group-hover:opacity-100"
+            style={{ background: "linear-gradient(to right, transparent, color-mix(in srgb, var(--color-welcome-gold) 45%, transparent), transparent)" }}
+          />
+          <Search className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
+          <span className="relative">{copy.openButton}</span>
         </button>
+
+        {/* How it works — three quiet steps */}
+        <ol className="mt-5 flex items-center justify-center gap-1.5 sm:mt-6" aria-label="How to RSVP">
+          {["Find your name", "Confirm", "Done"].map((step, i) => (
+            <li key={step} className="flex items-center gap-1.5">
+              {i > 0 && <span aria-hidden className="h-px w-3 sm:w-4" style={{ background: HAIRLINE }} />}
+              <span
+                className={`${cinzel.className} flex h-4 w-4 items-center justify-center rounded-full border text-[0.5rem] font-bold`}
+                style={{ borderColor: HAIRLINE, color: palette.accent }}
+                aria-hidden
+              >
+                {i + 1}
+              </span>
+              <span className="font-goudy-italic text-[0.72rem] sm:text-[0.78rem]" style={{ color: palette.body }}>
+                {step}
+              </span>
+            </li>
+          ))}
+        </ol>
       </fieldset>
+      </div>
     </section>
 
       {isMounted && showSearchModal && createPortal(
@@ -724,68 +922,23 @@ export function GuestList() {
             onClick={(event) => event.stopPropagation()}
           >
             <div
-              className="relative overflow-hidden rounded-[1.35rem]"
+              className="relative overflow-hidden rounded-[1.5rem]"
               style={modalCardStyle}
             >
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-6 top-0 h-px"
-                style={{
-                  background:
-                    "linear-gradient(to right, transparent, var(--color-welcome-gold), transparent)",
-                }}
+              <ModalBand
+                id="rsvp-search-title"
+                kicker="Kindly Respond"
+                title={copy.search.title}
+                script={copy.search.script}
+                onClose={() => setShowSearchModal(false)}
+                closeLabel="Close search"
               />
-              <button
-                type="button"
-                onClick={() => setShowSearchModal(false)}
-                className="absolute right-3 top-3 z-10 rounded-full p-1.5 transition-colors hover:bg-[color-mix(in_srgb,var(--color-motif-deep)_10%,transparent)]"
-                style={{ color: palette.heading }}
-                aria-label="Close search"
-              >
-                <X className="h-4 w-4 sm:h-5 sm:w-5" />
-              </button>
 
-              <div className="px-5 pb-4 pt-6 sm:px-6 sm:pt-7">
-                <h2
-                  id="rsvp-search-title"
-                  className="welcome-title-lockup relative mx-auto w-full max-w-full text-center"
-                  style={
-                    {
-                      "--title-size": modalTitleSize.main,
-                      "--script-size": modalTitleSize.script,
-                    } as CSSProperties
-                  }
-                >
-                  <span className="sr-only">{copy.search.title} — {copy.search.script}</span>
-                  <span
-                    aria-hidden
-                    className={`${theSeasons.className} block uppercase leading-[0.78] tracking-[0.08em] min-[400px]:tracking-[0.11em] sm:tracking-[0.13em]`}
-                    style={{
-                      fontSize: "var(--title-size)",
-                      color: palette.heading,
-                    }}
-                  >
-                    {copy.search.title}
-                  </span>
-                  <span
-                    aria-hidden
-                    className={`${aboveTheBeyond.className} relative z-10 mx-auto mt-1.5 block w-fit max-w-full px-1 leading-[0.88] sm:mt-2 sm:leading-[0.9]`}
-                    style={{
-                      fontSize: "var(--script-size)",
-                      color: palette.accent,
-                    }}
-                  >
-                    {copy.search.script}
-                  </span>
-                </h2>
-
-                <div className="mx-auto mt-3 flex items-center justify-center gap-1.5 sm:mt-4">
-                  <span className="h-px w-6 sm:w-8" style={dividerLineStyle} />
-                  <Heart className="h-3 w-3 sm:h-3.5 sm:w-3.5" style={{ color: palette.accent, fill: palette.accent }} aria-hidden />
-                  <span className="h-px w-6 sm:w-8" style={dividerLineStyle} />
-                </div>
-
-                <div ref={searchRef} className="relative mt-4 sm:mt-5">
+              <div className="px-5 pb-4 pt-5 sm:px-6 sm:pt-6">
+                <p className={`font-goudy-italic mb-3 text-center ${sectionType.textSnug}`} style={{ color: palette.body }}>
+                  Type your name as it appears on your invitation.
+                </p>
+                <div ref={searchRef} className="relative">
                   <Search
                     className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2"
                     style={{ color: palette.accent }}
@@ -878,10 +1031,11 @@ export function GuestList() {
                       }}
                     >
                       <div
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full sm:h-9 sm:w-9"
-                        style={{ background: SAGE_GRADIENT }}
+                        className={`${cinzel.className} flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border text-[0.7rem] font-bold tracking-[0.04em] sm:h-10 sm:w-10`}
+                        style={{ background: SAGE_GRADIENT, color: GOLD, borderColor: HAIRLINE }}
+                        aria-hidden
                       >
-                        <User className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color: IVORY }} />
+                        {guest.Name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("") || <User className="h-4 w-4" />}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div
@@ -969,181 +1123,153 @@ export function GuestList() {
       {/* RSVP Modal — portaled to escape motion/filter stacking context */}
       {isMounted && showModal && createPortal(
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden p-3 backdrop-blur-sm animate-in fade-in sm:p-4"
+          className={`${sheetOverlayClass} z-[9999]`}
           style={{ background: LIGHT_OVERLAY }}
           onClick={handleCloseModal}
         >
           <div
-            className="relative mx-1 flex max-h-[calc(100dvh-1.5rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl animate-in zoom-in-95 duration-300 @container/guest-modal sm:mx-2 sm:max-h-[calc(100dvh-2rem)] sm:max-w-lg md:mx-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="rsvp-invite-title"
+            className={sheetPanelClass}
             style={modalCardStyle}
             onClick={(e) => e.stopPropagation()}
           >
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-5 top-0 z-10 h-px sm:inset-x-8"
-              style={{
-                background:
-                  "linear-gradient(to right, transparent, var(--color-welcome-gold), transparent)",
-              }}
+            {/* Modal Header */}
+            <ModalBand
+              id="rsvp-invite-title"
+              kicker="Kindly Respond"
+              title={copy.invite.title}
+              script={selectedGuest?.Name || copy.invite.scriptFallback}
+              onClose={!hasResponded ? handleCloseModal : undefined}
+              compact={isCompactRsvp}
             />
 
-            {/* Modal Header */}
-            <div
-              className={`relative flex-shrink-0 px-4 text-center sm:px-6 ${
-                isCompactRsvp ? "pb-2.5 pt-4" : "pb-4 pt-5 sm:pb-5 sm:pt-6"
-              }`}
-            >
-              {!hasResponded && (
-                <button
-                  onClick={handleCloseModal}
-                  className="absolute right-2 top-2 rounded-full p-1 transition-colors hover:bg-[color-mix(in_srgb,var(--color-motif-deep)_10%,transparent)] sm:right-3 sm:top-3 sm:p-1.5"
-                  style={{ color: palette.heading }}
-                  aria-label="Close"
-                >
-                  <X className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
-              )}
-
-              {!isCompactRsvp && (
-                <div className="mx-auto mb-4 flex items-center justify-center gap-1.5 sm:mb-5">
-                  <span className="h-px w-6 sm:w-10" style={dividerLineStyle} />
-                  <Heart className="h-3 w-3 sm:h-3.5 sm:w-3.5" style={{ color: palette.accent }} aria-hidden />
-                  <span className="h-px w-6 sm:w-10" style={dividerLineStyle} />
-                </div>
-              )}
-
-              <h3
-                className="welcome-title-lockup relative mx-auto w-full max-w-full text-center"
-                style={
-                  {
-                    "--title-size": isCompactRsvp ? "clamp(1.1rem, 5.5vw, 1.6rem)" : modalTitleSize.main,
-                    "--script-size": isCompactRsvp ? "clamp(0.95rem, 4.6vw, 1.35rem)" : modalTitleSize.script,
-                  } as CSSProperties
-                }
+            {/* Event strip — day · date · time, straight from site.ts */}
+            {!isCompactRsvp && (
+              <div
+                className="grid shrink-0 grid-cols-3 divide-x border-b text-center"
+                style={{ borderColor: HAIRLINE, background: "color-mix(in srgb, var(--color-motif-blush) 14%, var(--color-motif-soft))" }}
               >
-                <span
-                  className={`${theSeasons.className} block uppercase leading-[0.78] tracking-[0.08em] min-[400px]:tracking-[0.11em] sm:tracking-[0.13em] pb-1 sm:pb-1.5`}
-                  style={{ fontSize: "var(--title-size)", color: palette.heading }}
-                >
-                  {copy.invite.title}
-                </span>
-                <span
-                  aria-hidden
-                  className={`${aboveTheBeyond.className} mx-auto block w-fit max-w-full px-1 leading-[0.88] sm:leading-[0.9] ${
-                    isCompactRsvp ? "mt-1" : "mt-2 sm:mt-2.5 md:mt-3"
-                  }`}
-                  style={{
-                    fontSize: "var(--script-size)",
-                    color: BUTTON,
-                  }}
-                >
-                  {selectedGuest?.Name || copy.invite.scriptFallback}
-                </span>
-              </h3>
+                {[
+                  { label: "Day", value: siteConfig.ceremony.day },
+                  { label: "Date", value: siteConfig.ceremony.date.replace(/,?\s*\d{4}$/, "") },
+                  { label: "Ceremony", value: siteConfig.ceremony.time },
+                ].map((cell) => (
+                  <div key={cell.label} className="px-1.5 py-2 sm:py-2.5" style={{ borderColor: HAIRLINE }}>
+                    <p className={`${cinzel.className} text-[0.5rem] font-bold uppercase tracking-[0.22em] sm:text-[0.5625rem]`} style={{ color: palette.accent }}>
+                      {cell.label}
+                    </p>
+                    <p className={`${cinzel.className} mt-0.5 text-[0.7rem] font-semibold tracking-[0.04em] sm:text-[0.8rem]`} style={{ color: palette.heading }}>
+                      {cell.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
 
+            {/* Greeting + reserved seats — one compact line each */}
+            <div className={`shrink-0 px-4 text-center sm:px-6 md:px-7 ${isCompactRsvp ? "pb-1.5 pt-2" : "pb-2 pt-3 sm:pt-4"}`}>
               {!isCompactRsvp && (
-                <p
-                  className={`font-goudy-italic mx-auto mt-4 max-w-md sm:mt-5 ${sectionType.textSnug}`}
-                  style={{ color: palette.body }}
-                >
+                <p className="font-goudy-italic mx-auto max-w-sm text-[0.84rem] leading-snug sm:text-[0.9rem]" style={{ color: palette.body }}>
                   {fill(copy.invite.greeting, {
-                    name: <span style={{ color: BUTTON }}>{selectedGuest?.Name}</span>,
+                    name: <span className="font-semibold" style={{ color: BUTTON }}>{selectedGuest?.Name?.split(" ")[0]}</span>,
                   })}
                 </p>
               )}
               <p
-                className={`font-goudy-italic mx-auto ${isCompactRsvp ? "mt-1 text-[0.8rem]" : `mt-2 ${sectionType.text}`}`}
-                style={{ color: palette.body }}
+                className={`${cinzel.className} mx-auto inline-flex max-w-full items-center gap-1.5 rounded-full border px-3 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.12em] sm:text-[0.68rem] ${isCompactRsvp ? "" : "mt-2"}`}
+                style={{ ...innerSurfaceStyle, color: palette.heading }}
               >
-                {fill(copy.invite.seats, {
-                  count: (
-                    <>
-                      <span className="font-semibold" style={{ color: palette.accent }}>
-                        {selectedGuest?.AllowedGuests || 1}
-                      </span>{" "}
-                      {(selectedGuest?.AllowedGuests || 1) === 1 ? copy.invite.seatSingular : copy.invite.seatPlural}
-                    </>
-                  ),
-                })}
+                <Users className="h-3 w-3 shrink-0" style={{ color: palette.accent }} aria-hidden />
+                <span className="truncate">
+                  {fill(copy.invite.seats, {
+                    count: (
+                      <>
+                        <span className="font-bold" style={{ color: BUTTON }}>{(selectedGuest?.AllowedGuests || 1)}</span>{" "}
+                        {(selectedGuest?.AllowedGuests || 1) === 1 ? copy.invite.seatSingular : copy.invite.seatPlural}
+                      </>
+                    ),
+                  })}
+                </span>
               </p>
             </div>
 
             {/* Modal Content */}
             <div className="flex min-h-0 flex-1 flex-col">
                 {hasResponded ? (
-                  <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4 py-3 text-center sm:px-6 sm:py-4 md:px-7 md:py-6">
-                    <div
-                      className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full sm:mb-4 sm:h-14 sm:w-14 md:h-16 md:w-16"
-                      style={{ background: DEEP_GRADIENT }}
-                    >
-                      <CheckCircle className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" style={{ color: IVORY }} />
+                  <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-5 pt-1 text-center sm:px-6 md:px-7">
+                    {/* Already responded — status ribbon + summary */}
+                    <div className="relative mx-auto mb-3 mt-2 inline-flex items-center justify-center">
+                      <span
+                        aria-hidden
+                        className="absolute h-14 w-14 rounded-full"
+                        style={{ background: "color-mix(in srgb, var(--color-welcome-gold) 22%, transparent)" }}
+                      />
+                      <span
+                        className="relative flex h-12 w-12 items-center justify-center rounded-full shadow-md"
+                        style={{ background: DEEP_GRADIENT, boxShadow: "0 0 0 2px var(--color-motif-soft), 0 0 0 3px " + HAIRLINE }}
+                      >
+                        {selectedGuest?.RSVP === "No" ? (
+                          <XCircle className="h-6 w-6" style={{ color: IVORY }} />
+                        ) : (
+                          <Heart className="h-5 w-5" style={{ color: GOLD, fill: GOLD }} />
+                        )}
+                      </span>
                     </div>
                     <h4
-                      className={`${theSeasons.className} mb-2 uppercase tracking-[0.12em] sm:text-lg md:text-xl ${sectionType.subheader}`}
+                      className={`${theSeasons.className} uppercase tracking-[0.12em] ${sectionType.subheader}`}
                       style={{ color: palette.heading }}
                     >
-                      {copy.responded.title}
+                      <SpecialCharFont text={copy.responded.title} />
                     </h4>
-                    <p
-                      className={`font-goudy-italic mb-4 px-2 ${sectionType.text}`}
-                      style={{ color: palette.body }}
-                    >
+                    <p className={`font-goudy-italic mx-auto mt-1.5 max-w-sm ${sectionType.textSnug}`} style={{ color: palette.body }}>
                       {copy.responded.text}
                     </p>
-                    <div
-                      className="space-y-2.5 rounded-lg border p-3 sm:space-y-3 sm:p-4"
-                      style={innerSurfaceStyle}
-                    >
-                      <div className="mb-1.5 flex items-center justify-center gap-2 sm:mb-2">
-                        {selectedGuest?.RSVP === "Yes" && (
-                          <>
-                            <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: TEAL }} />
-                            <span className="font-goudy-italic text-xs font-semibold sm:text-sm" style={{ color: TEAL }}>
-                              {copy.responded.attending}
-                            </span>
-                          </>
-                        )}
-                        {selectedGuest?.RSVP === "No" && (
-                          <>
-                            <XCircle className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: TEAL_SOFT }} />
-                            <span className="font-goudy-italic text-xs font-semibold sm:text-sm" style={{ color: palette.body }}>
-                              {copy.responded.declined}
-                            </span>
-                          </>
-                        )}
+
+                    <div className="mt-4 overflow-hidden rounded-2xl border text-left" style={innerSurfaceStyle}>
+                      <div className="flex items-center justify-between gap-3 px-4 py-3">
+                        <span className={`${cinzel.className} text-[0.5625rem] font-bold uppercase tracking-[0.22em]`} style={{ color: palette.accent }}>
+                          Your response
+                        </span>
+                        <span
+                          className={`${cinzel.className} inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.12em]`}
+                          style={
+                            selectedGuest?.RSVP === "Yes"
+                              ? { background: DEEP_GRADIENT, color: "#fff", borderColor: GOLD }
+                              : { background: IVORY, color: palette.heading, borderColor: HAIRLINE }
+                          }
+                        >
+                          {selectedGuest?.RSVP === "Yes" ? (
+                            <CheckCircle className="h-3 w-3" aria-hidden />
+                          ) : (
+                            <XCircle className="h-3 w-3" aria-hidden />
+                          )}
+                          {selectedGuest?.RSVP === "Yes" ? copy.responded.attending : copy.responded.declined}
+                        </span>
                       </div>
                       {selectedGuest?.RSVP === "Yes" && (
-                        <div className="rounded-lg border p-2.5 sm:p-3" style={innerSurfaceStyle}>
-                          <div className="text-center">
-                            <p
-                              className={`font-goudy-italic mb-1 ${sectionType.label} font-medium`}
-                              style={{ color: palette.label }}
-                            >
-                              {copy.responded.guestCountLabel}
-                            </p>
-                            <p
-                              className={`${theSeasons.className} text-lg sm:text-xl md:text-2xl`}
-                              style={{ color: palette.heading }}
-                            >
-                              {selectedGuest.AllowedGuests || 1}
-                            </p>
-                          </div>
+                        <div className="flex items-center justify-between gap-3 border-t px-4 py-3" style={{ borderColor: HAIRLINE }}>
+                          <span className={`${cinzel.className} text-[0.5625rem] font-bold uppercase tracking-[0.22em]`} style={{ color: palette.accent }}>
+                            {copy.responded.guestCountLabel}
+                          </span>
+                          <span className={`${cinzel.className} text-lg font-bold`} style={{ color: palette.heading }}>
+                            {selectedGuest.AllowedGuests || 1}
+                          </span>
                         </div>
                       )}
                       {selectedGuest && selectedGuest.Message && selectedGuest.Message.trim() !== "" && (
-                        <div className="border-t pt-2" style={{ borderColor: innerSurfaceStyle.borderColor }}>
-                          <p
-                            className={`font-goudy-italic px-1 ${sectionType.label} italic`}
-                            style={{ color: palette.body }}
-                          >
+                        <div className="border-t px-4 py-3" style={{ borderColor: HAIRLINE }}>
+                          <p className={`font-goudy-italic text-center ${sectionType.label}`} style={{ color: palette.body }}>
                             &ldquo;{selectedGuest.Message}&rdquo;
                           </p>
                         </div>
                       )}
                     </div>
+
                     <button
                       onClick={handleCloseModal}
-                      className={`${cinzel.className} mt-4 rounded-full border px-8 py-2.5 ${sectionType.label} font-semibold uppercase tracking-[0.2em] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 sm:mt-5 sm:px-10 sm:py-3 md:mt-6`}
+                      className={`${cinzel.className} mt-5 w-full rounded-full border px-8 py-3 ${sectionType.label} font-semibold uppercase tracking-[0.2em] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110`}
                       style={primaryButtonStyle}
                     >
                       {copy.responded.closeButton}
@@ -1159,76 +1285,69 @@ export function GuestList() {
                     className="flex min-h-0 flex-1 flex-col"
                   >
                   {/* Body — fits on screen; scrolls only as a last resort on very short screens */}
-                  <div className={`min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 sm:px-6 md:px-7 ${isCompactRsvp ? "space-y-2.5" : "space-y-2.5 sm:space-y-3 md:space-y-4"}`}>
-                    <div>
-                      <label className={modalLabelClass} style={{ color: palette.heading }}>
-                        <Sparkles className="h-3.5 w-3.5 flex-shrink-0 sm:h-4 sm:w-4" style={{ color: palette.accent }} />
-                        <span>{copy.form.attendLabel}</span>
-                      </label>
-                      <div className="grid grid-cols-2 gap-1.5 sm:gap-2 md:gap-3">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setFormData((prev) => ({ ...prev, RSVP: "Yes", Guest: "1" }))
-                          }
-                          className={`relative rounded-lg border-2 transition-all duration-300 ${isCompactRsvp ? "p-2" : "p-2 sm:p-2.5 md:p-3 lg:p-4"} ${
-                            formData.RSVP === "Yes"
-                              ? "scale-[1.02] shadow-md"
-                              : "hover:shadow-sm"
-                          }`}
-                          style={
-                            formData.RSVP === "Yes"
-                              ? {
-                                  borderColor: palette.accent,
-                                  backgroundColor: "color-mix(in srgb, var(--color-motif-blush) 30%, var(--color-motif-soft))",
-                                }
-                              : { borderColor: HAIRLINE, backgroundColor: IVORY }
-                          }
-                        >
-                          <div className="flex items-center justify-center gap-1.5 sm:gap-2">
-                            <CheckCircle
-                              className="h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5"
-                              style={{
-                                color:
-                                  formData.RSVP === "Yes" ? palette.accent : TEAL_SOFT,
-                              }}
-                            />
-                            <span
-                              className="font-goudy-italic text-xs font-semibold sm:text-sm"
-                              style={{ color: palette.heading }}
+                  <div className={`min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain px-4 pb-3 pt-2 sm:px-6 md:px-7 ${isCompactRsvp ? "space-y-3" : "space-y-3.5 sm:space-y-4"}`}>
+                    <div className="space-y-2">
+                      <StepLabel n={1}>{copy.form.attendLabel}</StepLabel>
+                      <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label={copy.form.attendLabel}>
+                        {([
+                          { value: "Yes", label: copy.form.yes, sub: "Joyfully accepts", Icon: Heart },
+                          { value: "No", label: copy.form.no, sub: "Regretfully declines", Icon: XCircle },
+                        ] as const).map(({ value, label, sub, Icon }) => {
+                          const picked = formData.RSVP === value
+                          return (
+                            <button
+                              key={value}
+                              type="button"
+                              role="radio"
+                              aria-checked={picked}
+                              onClick={() =>
+                                setFormData((prev) =>
+                                  value === "Yes" ? { ...prev, RSVP: "Yes", Guest: "1" } : { ...prev, RSVP: "No" },
+                                )
+                              }
+                              className={`relative flex min-w-0 items-center justify-center gap-1.5 rounded-full border px-2.5 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-welcome-gold)] ${
+                                isCompactRsvp ? "py-1.5" : "py-2 sm:py-2.5"
+                              } ${picked ? "shadow-md" : "hover:shadow-sm"}`}
+                              style={
+                                picked
+                                  ? value === "Yes"
+                                    ? { background: DEEP_GRADIENT, borderColor: GOLD, color: "#fff" }
+                                    : { background: "color-mix(in srgb, var(--color-motif-deep) 12%, var(--color-motif-soft))", borderColor: TEAL_SOFT, color: palette.heading }
+                                  : { background: IVORY, borderColor: HAIRLINE, color: palette.heading }
+                              }
                             >
-                              {copy.form.yes}
-                            </span>
-                          </div>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setFormData((prev) => ({ ...prev, RSVP: "No" }))}
-                          className={`relative rounded-lg border-2 transition-all duration-300 ${isCompactRsvp ? "p-2" : "p-2 sm:p-2.5 md:p-3 lg:p-4"} ${
-                            formData.RSVP === "No" ? "scale-[1.02] shadow-md" : "hover:shadow-sm"
-                          }`}
-                          style={
-                            formData.RSVP === "No"
-                              ? {
-                                  borderColor: TEAL_SOFT,
-                                  backgroundColor: "color-mix(in srgb, var(--color-motif-deep) 10%, var(--color-motif-soft))",
-                                }
-                              : { borderColor: HAIRLINE, backgroundColor: IVORY }
-                          }
-                        >
-                          <div className="flex items-center justify-center gap-1.5 sm:gap-2">
-                            <XCircle
-                              className="h-4 w-4 flex-shrink-0 sm:h-5 sm:w-5"
-                              style={{ color: formData.RSVP === "No" ? palette.heading : TEAL_SOFT }}
-                            />
-                            <span
-                              className="font-goudy-italic text-xs font-semibold sm:text-sm"
-                              style={{ color: palette.heading }}
-                            >
-                              {copy.form.no}
-                            </span>
-                          </div>
-                        </button>
+                              <span
+                                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border sm:h-6 sm:w-6"
+                                style={{
+                                  borderColor: picked && value === "Yes" ? "color-mix(in srgb, white 45%, transparent)" : HAIRLINE,
+                                  background: picked && value === "Yes" ? "color-mix(in srgb, white 12%, transparent)" : "transparent",
+                                }}
+                                aria-hidden
+                              >
+                                <Icon
+                                  className="h-3 w-3"
+                                  style={{
+                                    color: picked && value === "Yes" ? GOLD : picked ? palette.heading : TEAL_SOFT,
+                                    fill: picked && value === "Yes" ? GOLD : "none",
+                                  }}
+                                />
+                              </span>
+                              <span className="min-w-0 text-left">
+                                <span className={`${cinzel.className} block truncate text-[0.68rem] font-bold uppercase tracking-[0.1em] sm:text-[0.74rem]`}>
+                                  {label}
+                                </span>
+                                {!isCompactRsvp && (
+                                  <span
+                                    className="font-goudy-italic hidden text-[0.72rem] leading-tight sm:block"
+                                    style={{ color: picked && value === "Yes" ? "color-mix(in srgb, white 80%, transparent)" : palette.body }}
+                                  >
+                                    {sub}
+                                  </span>
+                                )}
+                              </span>
+                            </button>
+                          )
+                        })}
                       </div>
                     </div>
 
@@ -1252,10 +1371,7 @@ export function GuestList() {
                       return (
                         <div className="space-y-2">
                           <div className="flex items-center justify-between gap-2">
-                            <label className={`${modalLabelClass} !mb-0`} style={{ color: palette.heading }}>
-                              <Users className="h-3.5 w-3.5 flex-shrink-0" style={{ color: palette.accent }} />
-                              <span>{copy.form.companionsLabel}</span>
-                            </label>
+                            <StepLabel n={2}>{copy.form.companionsLabel}</StepLabel>
                             <span
                               className={`${cinzel.className} shrink-0 text-[0.6rem] font-semibold uppercase tracking-[0.12em]`}
                               style={{ color: palette.accent }}
@@ -1396,11 +1512,10 @@ export function GuestList() {
                       )
                     })()}
 
-                    <div>
-                      <label className={modalLabelClass} htmlFor="rsvp-phone" style={{ color: palette.heading }}>
-                        <Phone className="h-3.5 w-3.5 flex-shrink-0 sm:h-4 sm:w-4" style={{ color: palette.accent }} />
-                        <span>{copy.form.phoneLabel}</span>
-                      </label>
+                    <div className="space-y-2">
+                      <StepLabel n={formData.RSVP === "Yes" && companions.length > 0 ? 3 : 2} htmlFor="rsvp-phone">
+                        {copy.form.phoneLabel}
+                      </StepLabel>
                       <input
                         ref={phoneInputRef}
                         id="rsvp-phone"
@@ -1651,87 +1766,45 @@ export function GuestList() {
         {/* Request to Join Modal */}
         {isMounted && showRequestModal && createPortal(
           <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden p-3 backdrop-blur-sm animate-in fade-in sm:p-4"
+            className={`${sheetOverlayClass} z-[9999]`}
             style={{ background: LIGHT_OVERLAY }}
             onClick={handleCloseRequestModal}
           >
             <div
-              className="relative mx-1 flex w-full max-w-md flex-col overflow-visible rounded-xl animate-in zoom-in-95 duration-300 @container/guest-modal sm:mx-2 sm:max-w-lg sm:rounded-2xl md:mx-4"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="rsvp-request-title"
+              className={sheetPanelClass}
               style={modalCardStyle}
               onClick={(e) => e.stopPropagation()}
             >
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-5 top-0 h-px sm:inset-x-8"
-                style={{
-                  background:
-                    "linear-gradient(to right, transparent, var(--color-welcome-gold), transparent)",
-                }}
+              <ModalBand
+                id="rsvp-request-title"
+                kicker="We'd love to have you"
+                title={copy.request.title}
+                script={copy.request.script}
+                onClose={handleCloseRequestModal}
               />
 
-              <div className="relative flex-shrink-0 px-4 pb-4 pt-5 text-center sm:px-6 sm:pb-5 sm:pt-6">
-                <button
-                  onClick={handleCloseRequestModal}
-                  className="absolute right-2 top-2 rounded-full p-1 transition-colors hover:bg-[color-mix(in_srgb,var(--color-motif-deep)_10%,transparent)] sm:right-3 sm:top-3 sm:p-1.5"
-                  style={{ color: palette.heading }}
-                  aria-label="Close"
-                >
-                  <X className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
+              <p
+                className={`font-goudy-italic mx-auto shrink-0 max-w-md px-5 pt-4 text-center sm:px-7 sm:pt-5 ${sectionType.textSnug}`}
+                style={{ color: palette.body }}
+              >
+                {requestFormData.Name
+                  ? fill(copy.request.greetingNamed, {
+                      name: <span className="font-semibold" style={{ color: palette.heading }}>{requestFormData.Name}</span>,
+                    })
+                  : copy.request.greeting}
+              </p>
 
-                <div className="mx-auto mb-4 flex items-center justify-center gap-1.5 sm:mb-5">
-                  <span className="h-px w-6 sm:w-10" style={dividerLineStyle} />
-                  <UserPlus className="h-3 w-3 sm:h-3.5 sm:w-3.5" style={{ color: palette.accent }} aria-hidden />
-                  <span className="h-px w-6 sm:w-10" style={dividerLineStyle} />
-                </div>
-
-                <h3
-                  className="welcome-title-lockup relative mx-auto w-full max-w-full text-center"
-                  style={
-                    {
-                      "--title-size": modalTitleSize.main,
-                      "--script-size": modalTitleSize.script,
-                    } as CSSProperties
-                  }
-                >
-                  <span
-                    className={`${theSeasons.className} block uppercase leading-[0.78] tracking-[0.08em] min-[400px]:tracking-[0.11em] sm:tracking-[0.13em] pb-1 sm:pb-1.5`}
-                    style={{ fontSize: "var(--title-size)", color: palette.heading }}
-                  >
-                    {copy.request.title}
-                  </span>
-                  <span
-                    aria-hidden
-                    className={`${aboveTheBeyond.className} mx-auto block w-fit max-w-full px-1 leading-[0.88] sm:leading-[0.9] mt-2 sm:mt-2.5 md:mt-3`}
-                    style={{
-                      fontSize: "var(--script-size)",
-                      color: palette.accent,
-                    }}
-                  >
-                    {copy.request.script}
-                  </span>
-                </h3>
-
-                <p
-                  className={`font-goudy-italic mx-auto mt-4 max-w-md sm:mt-5 ${sectionType.textSnug}`}
-                  style={{ color: palette.body }}
-                >
-                  {requestFormData.Name
-                    ? fill(copy.request.greetingNamed, {
-                        name: <span style={{ color: palette.heading }}>{requestFormData.Name}</span>,
-                      })
-                    : copy.request.greeting}
-                </p>
-              </div>
-
-              <div className="px-4 pb-4 sm:px-6 sm:pb-5 md:px-7 md:pb-6">
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    handleSubmitRequest()
-                  }}
-                  className="space-y-2.5 sm:space-y-3 md:space-y-4"
-                >
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  handleSubmitRequest()
+                }}
+                className="flex min-h-0 flex-1 flex-col"
+              >
+                <div className="min-h-0 flex-1 space-y-3 overflow-y-auto overflow-x-hidden overscroll-contain px-5 pb-4 pt-4 sm:space-y-3.5 sm:px-7">
                   <div>
                     <label className={modalLabelClass} style={{ color: palette.heading }}>
                       <User className="h-3.5 w-3.5 flex-shrink-0 sm:h-4 sm:w-4" style={{ color: palette.accent }} />
@@ -1824,7 +1897,21 @@ export function GuestList() {
                     />
                   </div>
 
-                  <div className="pt-2 sm:pt-3">
+                </div>
+
+                {/* Sticky footer — Send is always visible, even with the keyboard up */}
+                <div
+                  className="shrink-0 space-y-2 border-t px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 sm:px-7 sm:pb-5"
+                  style={{ borderColor: HAIRLINE, background: "color-mix(in srgb, var(--color-motif-cream) 92%, transparent)" }}
+                >
+                  {error && !requestSuccess && (
+                    <div className="rounded-lg border px-2.5 py-1.5" style={noticeStyle}>
+                      <div className="flex items-center gap-1.5">
+                        <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" style={{ color: TEAL }} />
+                        <span className={`font-goudy-italic font-semibold ${sectionType.label}`}>{error}</span>
+                      </div>
+                    </div>
+                  )}
                     <button
                       type="submit"
                       disabled={isLoading}
@@ -1843,13 +1930,12 @@ export function GuestList() {
                         </>
                       )}
                     </button>
-                  </div>
-                </form>
-              </div>
+                </div>
+              </form>
 
               {/* Enhanced Success Overlay */}
               {requestSuccess && (
-                <div className="absolute inset-0 bg-motif-soft/98 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-300 p-2 sm:p-3 md:p-4">
+                <div className="absolute inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-300" style={{ background: PAPER }}>
                   <div className="text-center p-3 sm:p-4 md:p-5 lg:p-6 max-w-sm mx-auto">
                     {/* Enhanced Icon Circle */}
                     <div className="relative inline-flex items-center justify-center mb-3 sm:mb-4">
@@ -1889,17 +1975,6 @@ export function GuestList() {
                 </div>
               )}
 
-              {/* Error message */}
-              {error && !requestSuccess && (
-                <div className="px-2 sm:px-2.5 md:px-4 lg:px-6 xl:px-8 pb-2 sm:pb-2.5 md:pb-4 lg:pb-6">
-                  <div className="rounded-xl border p-2 sm:p-2.5 md:p-3 lg:p-4" style={noticeStyle}>
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <AlertCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 flex-shrink-0" style={{ color: TEAL }} />
-                      <span className={`font-goudy-italic font-semibold ${sectionType.text}`}>{error}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>,
         document.body
