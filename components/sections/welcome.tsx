@@ -97,9 +97,9 @@ function LayeredWelcomeTitle({
       className="welcome-title-lockup relative mx-auto flex w-full max-w-full flex-col items-center text-center"
       style={
         {
-          "--welcome-size": "clamp(1.9rem, min(10vw, 12.5cqi), 4.5rem)",
-          "--connector-size": "clamp(0.6rem, min(2.6vw, 3cqi), 0.95rem)",
-          "--script-size": "clamp(2.4rem, min(15vw, 16cqi), 5.75rem)",
+          "--welcome-size": "clamp(1.7rem, min(8.6vw, 10.5cqi), 3.75rem)",
+          "--connector-size": "clamp(0.62rem, min(2.6vw, 3cqi), 0.88rem)",
+          "--script-size": "clamp(2.1rem, min(11.5vw, 13cqi), 4.5rem)",
         } as React.CSSProperties
       }
     >
@@ -217,7 +217,7 @@ export function Welcome() {
               {content.opening ? (
                 <p
                   className={`${aboveTheBeyond.className} mb-2 px-2 leading-[1.3] sm:mb-3`}
-                  style={{ color: WELCOME_COLORS.rose, fontSize: "clamp(1.75rem, min(8vw, 10cqi), 2.75rem)" }}
+                  style={{ color: WELCOME_COLORS.rose, fontSize: "clamp(1.5rem, min(6.4vw, 8cqi), 2.25rem)" }}
                 >
                   {content.opening}
                 </p>
@@ -245,7 +245,7 @@ export function Welcome() {
                 />
               </div>
               <p
-                className={`${aboveTheBeyond.className} text-[1.35rem] leading-[1.3] sm:text-[1.75rem]`}
+                className={`${aboveTheBeyond.className} text-[1.4rem] leading-[1.3] sm:text-[1.65rem]`}
                 style={{ color: WELCOME_COLORS.midnight }}
               >
                 {content.signOff}

@@ -155,13 +155,22 @@ const rise: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease } },
 }
 
-// The Seasons has no clean glyphs for "&" and digits — show those in Cinzel
-function SpecialCharFont({ text }: { text: string }) {
+// The Seasons has no clean glyphs for "&", digits or punctuation (the demo font stamps
+// "DEMO" on them) — show those characters in Cinzel, keep the letters in The Seasons.
+function SpecialCharFont({
+  text,
+  symbolClassName = "",
+  symbolStyle,
+}: {
+  text: string
+  symbolClassName?: string
+  symbolStyle?: React.CSSProperties
+}) {
   return (
     <>
       {text.split(/([^\p{L}\s]+)/u).map((part, i) =>
         i % 2 === 1 ? (
-          <span key={i} className={`${cinzel.className} tracking-normal`}>
+          <span key={i} className={`${cinzel.className} tracking-normal ${symbolClassName}`} style={symbolStyle}>
             {part}
           </span>
         ) : (
@@ -330,17 +339,35 @@ export function Footer() {
             />
           ) : null}
 
+          {/* Couple's name: The Seasons for the letters, Cinzel for "&" and any other
+              symbol, so the demo font never shows its placeholder glyphs */}
           <motion.h2
             variants={rise}
-            className={`${theSeasons.className} mt-4 text-4xl uppercase tracking-[0.1em] sm:mt-5 sm:text-5xl md:text-6xl`}
-            style={onBg}
+            aria-label={celebrant}
+            className={`${theSeasons.className} mt-5 flex flex-col items-center uppercase leading-[1.05] tracking-[0.12em] sm:mt-6`}
+            style={{ ...onBg, fontSize: "clamp(1.9rem, 8.5vw, 3.6rem)" }}
           >
-            {celebrant}
+            {celebrant.split(/\s*&\s*/).filter(Boolean).map((name, i) => (
+              <span key={name} className="flex flex-col items-center" aria-hidden>
+                {i > 0 ? (
+                  <span
+                    className={`${cinzel.className} my-1 block text-[0.5em] font-normal leading-none tracking-normal sm:my-1.5`}
+                    style={onBgGold}
+                  >
+                    &amp;
+                  </span>
+                ) : null}
+                {/* marginRight cancels the trailing tracking so each name sits centered */}
+                <span className="block whitespace-nowrap" style={{ marginRight: "-0.12em" }}>
+                  <SpecialCharFont text={name} />
+                </span>
+              </span>
+            ))}
           </motion.h2>
           {content.nameLine ? (
             <motion.p
               variants={rise}
-              className={`${aboveTheBeyond.className} -mt-1 px-2 text-3xl sm:text-4xl`}
+              className={`${aboveTheBeyond.className} mt-2 px-2 pb-1 text-[1.75rem] leading-[1.3] sm:mt-3 sm:text-4xl`}
               style={onBgGold}
             >
               {content.nameLine}
@@ -350,10 +377,12 @@ export function Footer() {
           {ceremonyDate ? (
             <motion.p
               variants={rise}
-              className={`${cinzel.className} mt-4 text-[0.7rem] font-semibold uppercase tracking-[0.28em] sm:mt-5 sm:text-xs`}
+              className={`${cinzel.className} mt-3 flex items-center gap-3 text-[0.7rem] font-semibold uppercase tracking-[0.28em] sm:mt-4 sm:text-xs`}
               style={onBgGold}
             >
-              {ceremonyDate}
+              <span className="h-px w-6 sm:w-10" style={{ background: "linear-gradient(to right, transparent, var(--color-welcome-gold))" }} aria-hidden />
+              <span style={{ marginRight: "-0.28em" }}>{ceremonyDate}</span>
+              <span className="h-px w-6 sm:w-10" style={{ background: "linear-gradient(to left, transparent, var(--color-welcome-gold))" }} aria-hidden />
             </motion.p>
           ) : null}
 
@@ -502,7 +531,7 @@ export function Footer() {
                       </p>
                     ) : (
                       <p className={`${lora.className} mt-1 ${ct.body} italic`} style={{ color: palette.soft }}>
-                        Kindly let me know if you can join the celebration.
+                        Kindly let us know if you can join the celebration.
                       </p>
                     )}
                     {content.rsvp.note && siteConfig.details.rsvp.deadline ? (

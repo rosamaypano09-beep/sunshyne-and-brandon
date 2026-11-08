@@ -3746,3 +3746,109 @@
 .env-invite-screen:not(.env-invite-screen--plain) .env-invite-hint {
   color: var(--color-welcome-blush);
 }
+
+/* ==========================================================================
+   Paper card — lighter, balanced typography (photos mode)
+   Sentence-case italic invitation line, names on their own lines with a small
+   gold "&", "The Wedding" in gold script, everything a touch smaller so the
+   card breathes, with one even rhythm between the groups.
+   Last in the file so it wins over the earlier card layers above.
+   ========================================================================== */
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-top {
+  gap: 0.55em;
+  padding-bottom: 0.6em;
+}
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-bottom {
+  gap: 0.5em;
+  padding-top: 0.35em;
+}
+
+/* "YOU'RE INVITED" — a little smaller, still gold foil caps */
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-eyebrow {
+  font-size: 0.74em;
+  letter-spacing: 0.32em;
+  padding-left: 0.32em;
+}
+
+/* Invitation line: soft italic serif in sentence case (no capitals) */
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-line {
+  max-width: 16.5em;
+  margin-top: 0.1em;
+  font-family: var(--env-font-tagline), "Lora", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.92em;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  text-transform: none;
+  font-variant: normal;
+  color: color-mix(in srgb, var(--color-motif-deep) 72%, var(--color-welcome-text));
+}
+
+/* The names: one per line, slightly smaller, a gold "&" between */
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-title .env-invite-letter-title__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 2.15em;
+  line-height: 1.05;
+  padding: 0.18em 0.3em 0.1em;
+}
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-title__line + .env-invite-letter-title__line {
+  margin-top: 0;
+}
+.env-invite-letter-title__amp {
+  display: block;
+  margin: 0.02em 0 0.06em;
+  font-family: var(--env-font-countdown), "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 0.42em;
+  line-height: 1;
+  color: var(--paper-gold, var(--color-welcome-gold));
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* "The Wedding" — gold script, smaller than the names so they lead */
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-occasion {
+  margin: 0.15em 0 0;
+}
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-occasion__script {
+  font-size: 1.5em;
+  letter-spacing: 0.01em;
+  color: var(--paper-gold);
+  -webkit-text-stroke: 0.01em var(--paper-gold);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* Date a touch smaller to match */
+.env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-date__day {
+  font-size: 1.85em;
+}
+
+@media (max-width: 767px) {
+  .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-inner {
+    padding: 1.6em 1.3em 0;
+  }
+  .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-top {
+    gap: 0.45em;
+    padding-bottom: 0.45em;
+  }
+  .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-bottom {
+    gap: 0.4em;
+    padding-top: 0.25em;
+  }
+  .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-line {
+    font-size: 0.86em;
+    max-width: 15.5em;
+  }
+  .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-title .env-invite-letter-title__main {
+    font-size: 1.8em;
+  }
+  .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-occasion__script {
+    font-size: 1.3em;
+  }
+  .env-invite-screen:not(.env-invite-screen--plain) .env-invite-letter .env-invite-letter-date__day {
+    font-size: 1.65em;
+  }
+}

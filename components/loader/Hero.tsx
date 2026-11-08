@@ -672,13 +672,15 @@ export const Hero: React.FC<HeroProps> = ({
                           <img src={gala.nameImage} alt="" aria-hidden="true" className="env-invite-letter-title__image" />
                         ) : (
                           <span className={`${aboveTheBeyond.className} env-invite-letter-title__main`}>
-                            {/* Two lines, like the poster: too wide for one on the card */}
+                            {/* One name per line with a small gold "&" between them */}
                             {fill(gala.title)
-                              .split(/\s(?=&)/)
-                              .map((line) => (
-                                <span key={line} className="env-invite-letter-title__line">
-                                  {line}
-                                </span>
+                              .split(/\s*&\s*/)
+                              .filter(Boolean)
+                              .map((name, i) => (
+                                <React.Fragment key={name}>
+                                  {i > 0 && <span className="env-invite-letter-title__amp">&amp;</span>}
+                                  <span className="env-invite-letter-title__line">{name}</span>
+                                </React.Fragment>
                               ))}
                           </span>
                         )}
