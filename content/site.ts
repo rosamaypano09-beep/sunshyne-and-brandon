@@ -39,7 +39,7 @@ export type AttireColor = string | { name: string; hex: string }
    NEW INVITATION — work top to bottom:
      1. COUPLE          bride + groom ({celebrant} in any text → "Bride & Groom")
      2. DATE & TIMES    wedding date, day, guest arrival / ceremony / reception times
-     3. VENUE           name, address, Google Maps link, photos;
+     3. CEREMONY_VENUE / RECEPTION_VENUE name, address, Google Maps link, photos;
                         VENUE_CARDS = labels on the Event Details venue card
      4. RSVP            deadline, coordinator, phone; HASHTAGS
      5. WEBSITE         SITE_URL = the live domain (keep the trailing "/").
@@ -107,14 +107,36 @@ const EVENT_DATE = "August 14, 2027"
 const EVENT_DAY = "Saturday"
 
 const TIMES = {
-  guestArrival: "9:00 AM", // ⚠ check — from the earlier draft, confirm with the couple
+  guestArrival: "2:30 PM", // One hour before the ceremony
   program: "3:30 PM", // Ceremony — countdown target
   end: "5:30 PM", // Reception (cocktail hour at Dusit Thani)
 }
 
 // ── Venue ───────────────────────────────────────────────────────────────────
-const VENUE = {
-  name: "Dusit Thani", // ⚠ check — add the church / venue name once confirmed
+// const VENUE = {
+//   name: "Dusit Thani", // ⚠ check — add the church / venue name once confirmed
+//   address: "Stella Hizon Reyes Drive, Bo Pampanga, Davao City, 8000, Philippines",
+//   map: "https://maps.app.goo.gl/JUsqPDCHCKBXAht69", // Google Maps pin (directions button + QR); "" hides the map QR and buttons
+//   // Step-by-step directions (FAQ) — add once the venue is confirmed
+//   directions: [] as string[],
+//   landmarks: [] as string[],
+//   // Venue card slideshow (Event Details) — [] shows the gold monogram panel
+//   photos: ["/Details/venue (6).jpg", "/Details/venue (7).jpg", "/Details/venue (8).jpg"] as string[],
+// }
+
+const CEREMONY_VENUE = {
+  name: "The View Davao",
+  address: "Talomo, Davao City, Davao del Sur",
+  map: "https://maps.app.goo.gl/TfX51Ds5iMe8KpAcA", // Google Maps pin (directions button + QR); "" hides the map QR and buttons
+  // Step-by-step directions (FAQ) — add once the venue is confirmed
+  directions: [] as string[],
+  landmarks: [] as string[],
+  // Venue card slideshow (Event Details) — [] shows the gold monogram panel
+  photos: ["/Details/venue (9).jpg", "/Details/venue (10).jpg", "/Details/venue (11).jpg", "/Details/venue (12).jpg"] as string[],
+}
+
+const RECEPTION_VENUE = {
+  name: "Dusit Thani",
   address: "Stella Hizon Reyes Drive, Bo Pampanga, Davao City, 8000, Philippines",
   map: "https://maps.app.goo.gl/JUsqPDCHCKBXAht69", // Google Maps pin (directions button + QR); "" hides the map QR and buttons
   // Step-by-step directions (FAQ) — add once the venue is confirmed
@@ -123,8 +145,6 @@ const VENUE = {
   // Venue card slideshow (Event Details) — [] shows the gold monogram panel
   photos: ["/Details/venue (6).jpg", "/Details/venue (7).jpg", "/Details/venue (8).jpg"] as string[],
 }
-const CEREMONY_VENUE = VENUE
-const RECEPTION_VENUE = VENUE
 
 // ── Venue card (Event Details section) ──────────────────────────────────────
 // layout:
@@ -135,7 +155,7 @@ const RECEPTION_VENUE = VENUE
 // showDate     = show the big Month / Day / Year
 // showArrival  = show "Arrival: <guest arrival time>" (otherwise "At <time>")
 const VENUE_CARDS = {
-  layout: "combined" as "separate" | "combined",
+  layout: "separate" as "separate" | "combined",
   combined: {
     badge: "The Wedding",
     sectionLabel: "Venue",
@@ -400,7 +420,7 @@ export const siteConfig = {
   wedding: {
     date: EVENT_DATE,
     time: TIMES.program,
-    venue: VENUE.name,
+    venue: CEREMONY_VENUE.name,
     tagline: "are getting married",
     theme: EVENT.theme,
     motif: EVENT.colors,
@@ -414,7 +434,7 @@ export const siteConfig = {
     nameImage: "", // "" sets the names in script (Above the Beyond); BRAND.nameImage uses the lettering image
     eyebrow: "", // Caps line under the names ("" hides it)
     titleScript: "invite you to their wedding", // Script line above the date ("" hides it)
-    meta: `${EVENT_DAY} · ${TIMES.program} · ${VENUE.name}`, // Caps line under the date ("" hides it)
+    meta: `${EVENT_DAY} · ${TIMES.program} · ${CEREMONY_VENUE.name}`, // Caps line under the date ("" hides it)
     countdownHeading: "Counting down to happily ever after",
     countdownLabels: {
       days: "Days",
@@ -461,7 +481,7 @@ export const siteConfig = {
       subtitle: "", // caps line beneath ("" hides it)
       promise: "Two hearts, one enchanted promise", // line under the names on the poster ("" hides it)
       kicker: "Please join us for",
-      dateLine: `${EVENT_DATE}  ·  ${VENUE.name}`, // gold caps under the occasion ("" hides it)
+      dateLine: `${EVENT_DATE}  ·  ${CEREMONY_VENUE.name}`, // gold caps under the occasion ("" hides it)
       // Ghost lettering that drifts down the left edge and up the right ([] hides it)
       ghostText: ["{celebrant}", EVENT.theme], // symbols and digits switch to Cinzel (The Seasons demo font stamps "DEMO" on them)
       occasionNumber: "", // "" hides the number
@@ -478,7 +498,7 @@ export const siteConfig = {
     backgroundPhotos: FEATURED_PHOTOS,
     // Poster corners: small caps at the very top (left sits beside the monogram). "" hides one.
     topLeft: "The Wedding",
-    topRight: VENUE.name,
+    topRight: CEREMONY_VENUE.name,
     headline: "Save the Date",
     // {days} is replaced with the number of days left before the wedding
     countdownText: "{days} days until happily ever after",
@@ -1584,8 +1604,8 @@ export const siteConfig = {
         area: "Lanang · Our Reception Venue",
         description:
           "The most convenient choice of all: stay right where our reception happens. After a night of dinner, dancing and games, your room is just an elevator ride away. The hotel has kindly given our guests special wedding room rates.",
-        image: VENUE.photos[0] ?? "",
-        mapsLink: VENUE.map,
+        image: RECEPTION_VENUE.photos[0] ?? "",
+        mapsLink: RECEPTION_VENUE.map,
         rates: {
           title: "Wedding Event Room Rates",
           // ⚠ check — how should guests book / which name to mention? ("" hides it)
