@@ -719,6 +719,14 @@ export const siteConfig = {
             "We kindly ask that you keep your phones away during the ceremony and let our official photographers capture every moment. You are welcome to take photos at the reception!",
           ],
         },
+        {
+          title: "Little Ones",
+          variant: "soft" as "accent" | "soft",
+          showPalette: false,
+          paragraphs: [
+            "We adore your little ones, but we have planned our celebration as an adults-focused evening. With love, we kindly ask that children under 8 stay home, except for those in our entourage, so everyone, parents included, can relax and enjoy the night with us.",
+          ],
+        },
       ],
     },
   },
@@ -1040,6 +1048,11 @@ export const siteConfig = {
         question: "May I bring a plus one?",
         answer:
           "Seating is limited and the celebration is by invitation only. Kindly RSVP only for the number of seats reserved under your name.",
+      },
+      {
+        question: "Are children welcome?",
+        answer:
+          "We love your little ones! To keep the evening relaxed for everyone, we have planned an adults-focused celebration and kindly ask that children under 8 stay home, except for those in our entourage.\n\nWe hope this gives you a well-deserved night off to celebrate with us. Thank you so much for understanding.",
       },
       {
         question: "What if I can no longer attend?",
