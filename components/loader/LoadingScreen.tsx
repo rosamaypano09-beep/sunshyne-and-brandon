@@ -129,6 +129,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete, onFade
   const ghostText = (gala.ghostText ?? []).map((t) => fill(t)).filter(Boolean).join('  ·  ');
   // "\n" in the date line: the first part sits between the gold hairlines, the rest below
   const [dateMain, ...dateRest] = (gala.dateLine ?? '').split('\n');
+  // A longer occasion ("Wedding Reception") is set a little smaller so it fits a phone
+  const longOccasion = (gala.occasion ?? '').length > 14;
 
   useEffect(() => {
     document.documentElement.style.overflow = 'hidden';
@@ -345,7 +347,7 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete, onFade
             </p>
           )}
           <h2
-            className="gala__occasion"
+            className={`gala__occasion${longOccasion ? ' gala__occasion--long' : ''}`}
             aria-label={`${gala.occasionNumber}${gala.occasionSuffix} ${gala.occasion}`.trim()}
           >
             {/* Each piece carries its own gold fill — background-clip text doesn't reach nested elements */}

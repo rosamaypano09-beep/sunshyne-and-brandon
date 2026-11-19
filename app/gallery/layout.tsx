@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { cinzel } from "@/lib/fonts"
 
 
@@ -11,7 +11,21 @@ const GOLD_BORDER = "color-mix(in srgb, var(--color-welcome-gold) 38%, transpare
 const NAV_GOLD =
   "linear-gradient(180deg, #E8D5A3 0%, #CDB072 52%, #C4A265 100%)"
 
+// Same-site paths only ("/invitetwo"), never "//other-site.com"
+function isLocalPath(path: string | null): path is string {
+  return !!path && path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/gallery")
+}
+
 export default function GalleryLayout({ children }: { children: React.ReactNode }) {
+  // The invite page that opened the gallery (set by the "View Full Gallery" button)
+  const [returnPath, setReturnPath] = useState("/")
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("galleryReturnPath")
+      if (isLocalPath(saved)) setReturnPath(saved)
+    } catch {}
+  }, [])
+
   useEffect(() => {
     const navbar = document.querySelector("nav") as HTMLElement | null
     if (navbar) navbar.style.display = "none"
@@ -32,8 +46,12 @@ export default function GalleryLayout({ children }: { children: React.ReactNode 
       >
         <div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-3 sm:h-14 sm:px-6 lg:px-8">
           <Link
-            href="/#gallery"
-            onClick={() => sessionStorage.setItem("returnFromGallery", "true")}
+            href={`${returnPath}#gallery`}
+            onClick={() => {
+              try {
+                sessionStorage.setItem("returnFromGallery", "true")
+              } catch {}
+            }}
             className={`${cinzel.className} inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[0.625rem] font-semibold uppercase tracking-[0.16em] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] sm:gap-2 sm:px-4 sm:py-2 sm:text-[0.6875rem] sm:tracking-[0.2em]`}
             style={{
               background: NAV_GOLD,
@@ -42,7 +60,7 @@ export default function GalleryLayout({ children }: { children: React.ReactNode 
             }}
           >
             <span aria-hidden>←</span>
-            <span className="hidden xs:inline">Back to main page</span>
+            <span className="hidden xs:inline">Back to invitation</span>
             <span className="xs:hidden">Back</span>
           </Link>
           <div

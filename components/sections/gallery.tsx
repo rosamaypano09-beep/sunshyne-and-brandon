@@ -419,6 +419,13 @@ export function Gallery() {
             <div className="mt-10 flex justify-center sm:mt-12 md:mt-14">
               <Link
                 href={gallery.buttonHref}
+                // Remember which invite page (/, /inviteone, /invitetwo…) opened the gallery,
+                // so its "Back" button returns there (app/gallery/layout.tsx)
+                onClick={() => {
+                  try {
+                    sessionStorage.setItem("galleryReturnPath", window.location.pathname)
+                  } catch {}
+                }}
                 className={`${cinzel.className} inline-flex items-center justify-center rounded-full border px-8 py-3 text-[0.625rem] font-semibold uppercase tracking-[0.18em] transition-all duration-300 hover:scale-[1.03] hover:brightness-110 active:scale-[0.98] sm:text-[0.6875rem] sm:tracking-[0.22em]`}
                 style={{
                   background: "linear-gradient(180deg, var(--color-motif-royal) 0%, var(--color-motif-deep) 100%)",

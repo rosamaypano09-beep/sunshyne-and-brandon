@@ -1421,8 +1421,9 @@ export const siteConfig = {
     loadingScreen: {
       eyebrow: "An Enchanted Evening",
       promise: "Dinner, dancing & happily ever after",
-      kicker: "You are invited to",
-      occasion: "The Reception",
+      // Reads as one line: "You are invited to the / Wedding Reception"
+      kicker: "You are invited to the",
+      occasion: "Wedding Reception",
       dateLine: "{day} · {date}\n{time} · {venue}",
       statusMessages: [
         "Setting the tables",
