@@ -16,6 +16,8 @@ import { useSiteConfig } from "@/hooks/use-site-config"
 import { useCssColor } from "@/hooks/use-css-color"
 import { WeddingPlaylist } from "@/components/sections/wedding-playlist"
 import type { SponsorsList } from "@/components/sections/entourage"
+import { SiteConfigOverride } from "@/contexts/site-config-context"
+import { toReceptionInviteConfig } from "@/lib/reception-invite"
 
 const Silk = dynamic(() => import("@/components/silk"), { ssr: false })
 const GuestList = dynamic(() => import("@/components/sections/guest-list").then(mod => ({ default: mod.GuestList })), { ssr: false })
@@ -106,9 +108,20 @@ type InvitationPageProps = {
   sponsorsList?: SponsorsList
   /** false hides the entourage section (e.g. /inviteguest) */
   showEntourage?: boolean
+  /** true = reception-only guests (e.g. /invitetwo): reception time and venue only, no ceremony */
+  receptionOnly?: boolean
 }
 
-export function InvitationPage({ sponsorsList, showEntourage = true }: InvitationPageProps = {}) {
+export function InvitationPage({ receptionOnly = false, ...props }: InvitationPageProps = {}) {
+  if (!receptionOnly) return <InvitationPageContent {...props} />
+  return (
+    <SiteConfigOverride transform={toReceptionInviteConfig}>
+      <InvitationPageContent {...props} />
+    </SiteConfigOverride>
+  )
+}
+
+function InvitationPageContent({ sponsorsList, showEntourage = true }: Omit<InvitationPageProps, "receptionOnly">) {
   // Skip loading/landing only when returning from /gallery.
   // The flag is set by the "View Full Gallery" button and cleared immediately
   // here so a page refresh always replays the loading screen.

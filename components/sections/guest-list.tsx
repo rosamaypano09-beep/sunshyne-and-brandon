@@ -1154,7 +1154,7 @@ export function GuestList() {
                 {[
                   { label: "Day", value: siteConfig.ceremony.day },
                   { label: "Date", value: siteConfig.ceremony.date.replace(/,?\s*\d{4}$/, "") },
-                  { label: "Ceremony", value: siteConfig.ceremony.time },
+                  { label: siteConfig.ceremony.timeLabel ?? "Ceremony", value: siteConfig.ceremony.time },
                 ].map((cell) => (
                   <div key={cell.label} className="px-1.5 py-2 sm:py-2.5" style={{ borderColor: HAIRLINE }}>
                     <p className={`${cinzel.className} text-[0.5rem] font-bold uppercase tracking-[0.22em] sm:text-[0.5625rem]`} style={{ color: palette.accent }}>

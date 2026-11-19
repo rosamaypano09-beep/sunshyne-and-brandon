@@ -2,7 +2,8 @@
 
 import { InvitationPage } from "@/components/invitation-page"
 
-// Full invitation; entourage shows principal sponsors from googleAPI.sponsorsInviteTwo
+// Reception-only invitation: shows the reception time and venue, never the ceremony,
+// and leaves out the entourage section.
 export default function InviteTwoPage() {
-  return <InvitationPage sponsorsList="two" />
+  return <InvitationPage receptionOnly showEntourage={false} />
 }

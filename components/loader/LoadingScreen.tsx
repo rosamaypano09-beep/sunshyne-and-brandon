@@ -127,6 +127,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete, onFade
   // "Sunshyne & Brandon" → two lines: the script is too wide for one on a phone
   const nameLines = name.split(/\s(?=&)/);
   const ghostText = (gala.ghostText ?? []).map((t) => fill(t)).filter(Boolean).join('  ·  ');
+  // "\n" in the date line: the first part sits between the gold hairlines, the rest below
+  const [dateMain, ...dateRest] = (gala.dateLine ?? '').split('\n');
 
   useEffect(() => {
     document.documentElement.style.overflow = 'hidden';
@@ -363,10 +365,13 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete, onFade
             </span>
           </h2>
           {/* Date and place under the occasion */}
-          {gala.dateLine && (
+          {dateMain && (
             <p className="gala__fullname">
-              <span className="gala-gold">{gala.dateLine}</span>
+              <span className="gala-gold">{dateMain}</span>
             </p>
+          )}
+          {dateRest.length > 0 && (
+            <p className="gala__subline">{dateRest.join(' ')}</p>
           )}
           <GoldRule />
 

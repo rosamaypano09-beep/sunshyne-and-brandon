@@ -392,6 +392,12 @@ export function Hero() {
           </motion.p>
         )}
 
+        {hero.badge && (
+          <motion.p className={`${cinzel.className} home-hero-badge uppercase`} {...fadeUp(0.27)}>
+            {fill(hero.badge)}
+          </motion.p>
+        )}
+
         <motion.p
           className={`${cinzel.className} home-hero-date text-[clamp(1.85rem,8.5vw,3.4rem)] font-normal leading-none tracking-[0.08em]`}
           {...fadeUp(0.3)}
@@ -401,7 +407,14 @@ export function Hero() {
 
         {hero.meta && (
           <motion.p className={`${cinzel.className} home-hero-meta uppercase`} {...fadeUp(0.36)}>
-            {fill(hero.meta)}
+            {/* "\n" in the meta starts a new line (e.g. day · time, then the venue) */}
+            {fill(hero.meta)
+              .split("\n")
+              .map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
           </motion.p>
         )}
       </div>

@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react"
@@ -76,4 +77,24 @@ export function useSiteConfigState(): SiteConfigContextValue {
     throw new Error("useSiteConfigState must be used within a SiteConfigProvider")
   }
   return context
+}
+
+/**
+ * Re-provides the site config with `transform` applied, for pages that need a
+ * variant of it (e.g. the reception-only /invitetwo). Children's useSiteConfig()
+ * returns the transformed config.
+ */
+export function SiteConfigOverride({
+  transform,
+  children,
+}: {
+  transform: (config: SiteConfig) => SiteConfig
+  children: ReactNode
+}) {
+  const parent = useSiteConfigState()
+  const value = useMemo(
+    () => ({ ...parent, siteConfig: transform(parent.siteConfig) }),
+    [parent, transform],
+  )
+  return <SiteConfigContext.Provider value={value}>{children}</SiteConfigContext.Provider>
 }

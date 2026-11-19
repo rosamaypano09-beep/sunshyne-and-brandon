@@ -385,3 +385,35 @@
   margin-top: clamp(0.55rem, 2.2vw, 0.85rem);
   font-size: clamp(0.68rem, 2.9vw, 0.82rem);
 }
+
+/* ---- Badge + wrapping script (reception invite, /invitetwo) ----
+   A small gold-bordered pill naming the event, above the date. */
+.home-hero-badge {
+  display: inline-block;
+  margin: clamp(0.9rem, 3.6vw, 1.3rem) auto 0;
+  padding: 0.5em 1.3em 0.45em 1.42em; /* extra left balances the trailing tracking */
+  border: 1px solid color-mix(in srgb, var(--color-welcome-gold) 70%, transparent);
+  border-radius: 999px;
+  font-size: clamp(0.62rem, 2.7vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  line-height: 1;
+  color: color-mix(in srgb, var(--color-welcome-gold) 55%, #fff6dc);
+  background: color-mix(in srgb, #0a1226 45%, transparent);
+  backdrop-filter: blur(2px);
+}
+.home-hero--photos .home-hero-badge {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+.home-hero .home-hero-meta span + span {
+  margin-top: 0.35em;
+}
+/* Phones: the script line may wrap instead of running off both edges */
+@media (max-width: 640px) {
+  .home-hero-turns {
+    max-width: 100%;
+    white-space: normal;
+    text-wrap: balance;
+    line-height: 1.15;
+  }
+}

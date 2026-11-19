@@ -434,6 +434,7 @@ export const siteConfig = {
     nameImage: "", // "" sets the names in script (Above the Beyond); BRAND.nameImage uses the lettering image
     eyebrow: "", // Caps line under the names ("" hides it)
     titleScript: "invite you to their wedding", // Script line above the date ("" hides it)
+    badge: "", // Small caps pill above the date ("" hides it)
     meta: `${EVENT_DAY} · ${TIMES.program} · ${CEREMONY_VENUE.name}`, // Caps line under the date ("" hides it)
     countdownHeading: "Counting down to happily ever after",
     countdownLabels: {
@@ -720,11 +721,12 @@ export const siteConfig = {
           ],
         },
         {
-          title: "Little Ones",
+          title: "An Adults-Only Celebration",
           variant: "soft" as "accent" | "soft",
           showPalette: false,
           paragraphs: [
-            "We adore your little ones, but we have planned our celebration as an adults-focused evening. With love, we kindly ask that children under 8 stay home, except for those in our entourage, so everyone, parents included, can relax and enjoy the night with us.",
+            "We adore your little ones, but our wedding is an adults-only celebration. With love, we kindly ask that you leave the kids at home for the night, with the exception of the children in our entourage.",
+            "We hope you enjoy a well-deserved evening off to dine, dance, and celebrate with us. Thank you so much for understanding.",
           ],
         },
       ],
@@ -1050,9 +1052,9 @@ export const siteConfig = {
           "Seating is limited and the celebration is by invitation only. Kindly RSVP only for the number of seats reserved under your name.",
       },
       {
-        question: "Are children welcome?",
+        question: "Can I bring my kids?",
         answer:
-          "We love your little ones! To keep the evening relaxed for everyone, we have planned an adults-focused celebration and kindly ask that children under 8 stay home, except for those in our entourage.\n\nWe hope this gives you a well-deserved night off to celebrate with us. Thank you so much for understanding.",
+          "We love your little ones, but our wedding is an adults-only celebration. We kindly ask that children stay home for the night, with the exception of those in our entourage.\n\nWe hope this gives you a well-deserved night off to dine, dance, and celebrate with us. Thank you so much for understanding.",
       },
       {
         question: "What if I can no longer attend?",
@@ -1382,6 +1384,7 @@ export const siteConfig = {
     date: EVENT_DATE,
     day: EVENT_DAY,
     time: TIMES.program,
+    timeLabel: "Ceremony", // label for this time on the RSVP card
     entourageTime: TIMES.guestArrival,
     guestsTime: TIMES.guestArrival,
     image: CEREMONY_VENUE.photos,
@@ -1394,6 +1397,53 @@ export const siteConfig = {
     day: EVENT_DAY,
     time: TIMES.end,
     image: RECEPTION_VENUE.photos,
+  },
+  // Reception-only invitation (/invitetwo) — for guests invited to the reception only.
+  // The page uses the reception's time, venue and map everywhere (hero, countdown,
+  // loading screen, RSVP, footer) and leaves out the ceremony time and venue.
+  // See lib/reception-invite.ts.
+  receptionInvite: {
+    // Top hero — reads as one line: "Join us for an enchanted evening with
+    // Sunshyne & Brandon to celebrate their marriage". Keep titleScript short:
+    // it is set in large script and must fit a phone screen.
+    // meta: {day}, {time}, {venue} are filled in; "\n" starts a new line.
+    hero: {
+      srTitle: "{celebrant} invite you to their wedding reception",
+      kicker: "Join us for an enchanted evening with",
+      titleScript: "to celebrate their marriage",
+      badge: "The Wedding Reception",
+      meta: "{day} · {time}\n{venue}",
+      countdownHeading: "Until we raise our glasses",
+    },
+    cardLine: "Together with their families, you are joyfully invited to the wedding reception of",
+    // Opening poster (loading screen). dateLine: {day}, {date}, {time}, {venue} are
+    // filled in; "\n" puts the rest on a second, smaller line.
+    loadingScreen: {
+      eyebrow: "An Enchanted Evening",
+      promise: "Dinner, dancing & happily ever after",
+      kicker: "You are invited to",
+      occasion: "The Reception",
+      dateLine: "{day} · {date}\n{time} · {venue}",
+      statusMessages: [
+        "Setting the tables",
+        "Lighting the candles",
+        "Chilling the champagne",
+        "Saving your seat",
+      ],
+    },
+    // Program items (weddingTimeline.events titles) that happen before the reception
+    hiddenTimelineEvents: ["Ceremony", "Pictorials", "Travel Time"],
+    // Gentle reminders (eventDetails.reminders.items titles) to leave out
+    hiddenReminders: ["Unplugged Ceremony"],
+    arrivalReminder:
+      "Please arrive by {guestsTime} so you can find your seat and settle in as the celebration begins.",
+    // FAQ answers replaced on this page (matched by question)
+    faqAnswers: {
+      "What time should I arrive?":
+        "Please arrive by {guestsTime} at {venueName}. Cocktail hour starts the evening, followed by the program, dinner, and a night of celebrating.",
+      "May I take photos and videos?":
+        "Snap away! Share your photos using the hashtags in [Snap & Share](#snap-share).",
+    } as Record<string, string>,
   },
   // Legacy blocks (not shown on the main page) — kept so older components compile.
   dressCode: {
