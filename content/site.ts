@@ -125,14 +125,14 @@ const TIMES = {
 // }
 
 const CEREMONY_VENUE = {
-  name: "The View Davao",
-  address: "Talomo, Davao City, Davao del Sur",
-  map: "https://maps.app.goo.gl/TfX51Ds5iMe8KpAcA", // Google Maps pin (directions button + QR); "" hides the map QR and buttons
+  name: "Dusit Thani Foyer",
+  address: "Stella Hizon Reyes Drive, Bo Pampanga, Davao City, 8000, Philippines",
+  map: "https://maps.app.goo.gl/JUsqPDCHCKBXAht69", // Google Maps pin (directions button + QR); "" hides the map QR and buttons
   // Step-by-step directions (FAQ) — add once the venue is confirmed
   directions: [] as string[],
   landmarks: [] as string[],
   // Venue card slideshow (Event Details) — [] shows the gold monogram panel
-  photos: ["/Details/venue (9).jpg", "/Details/venue (10).jpg", "/Details/venue (11).jpg", "/Details/venue (12).jpg"] as string[],
+  photos: ["/Details/venue (8).jpg", "/Details/venue (7).jpg", "/Details/venue (6).jpg"] as string[],
 }
 
 const RECEPTION_VENUE = {
@@ -761,7 +761,7 @@ export const siteConfig = {
         time: "3:30 – 4:30 PM",
         title: "Ceremony",
         description: "Two hearts, one promise.",
-        location: "The View",
+        location: "Dusit Thani Foyer",
         image: "/weddingtimeline/WeddingCeremony.png",
         icon: "rings" as TimelineIconName,
       },
